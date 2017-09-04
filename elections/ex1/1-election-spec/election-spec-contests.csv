@@ -1,0 +1,11 @@
+Contest id      , Contest type , Winners   ,Write-ins  , Selections 
+Denver Prop 1   , Plurality    , 1         , No        , Yes        , No  
+Denver Prop 2   , Plurality    , 1         , No        , Yes        , No   
+Denver Mayor    , Plurality    , 1         , Qualified , John Smith , Bob Cat   , Mary Mee   ,+Jack Frost 
+Denver Clerk    , Plurality    , 1         , No        , Yet Again  , New Guy
+Logan Mayor     , Plurality    , 1         , Arbitrary , Susan Hat  , Barry Su  , Benton Liu 
+Logan Water     , Plurality    , 1         , No        , Yes        , No
+U.S. President  , Plurality    , 1         , Arbitrary , Don Brown  , Larry Pew
+U.S. Senate 1   , Plurality    , 1         , Qualified , Deb O'Crat , Rhee Pub  , Val Green  , +Tom Cruz 
+U.S. Senate 2   , Plurality    , 1         , Qualified , Term Three , Old Guy   , +Hot Stuff
+CO Prop A       , Plurality    , 1         , No        , Yes        , No

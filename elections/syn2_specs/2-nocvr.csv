@@ -1,0 +1,4 @@
+Contest,    Collection,    Reported Vote,    Actual Vote,  Number
+cid1, pbcid1, -noCVR, Alice, 3300
+cid1, pbcid1, -noCVR, Bob,   3100
+cid1, pbcid1, -noCVR, Bob,   3

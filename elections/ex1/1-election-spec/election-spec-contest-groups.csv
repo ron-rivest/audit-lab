@@ -1,0 +1,9 @@
+Contest group id ,Contest or group id(s)
+FEDERAL          ,U.S. President   ,U.S. Senate 1        ,U.S. Senate 2
+STATE            ,CO Prop A
+FED STATE        ,FEDERAL          ,STATE
+DENVER LOCAL     ,Denver Mayor     ,Denver Clerk, Denver Prop 1, Denver Prop 2
+DENVER           ,FED STATE        ,DENVER LOCAL
+LOGAN REQ        ,FED STATE        ,Logan Mayor 
+LOGAN POSS       ,Logan Water
+

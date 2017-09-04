@@ -1,3 +1,14 @@
+Note: This repo "audit-lab" was created initially 2017-09-04
+as a copy of
+www.github.com/ron-rivest/2017-bayes-audit/2017-code
+As of 2017-09-04, nothing else has been changed.  It is
+just a copy.  This repo was initialized with the python code
+this README, and some data files.  But it does not contain
+the git history of how it got to this point.  If you are
+interested in that, or more links on Bayesian audits,
+see the original repo (which is public)
+www.github.com/ron-rivest/2017-bayes-audit 
+
 # Documentation for multi.py (Bayesian audit support program)
 
 ``multi.py`` is Python3 software (or suite of programs) to support

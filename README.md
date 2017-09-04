@@ -9,6 +9,11 @@ interested in that, or more links on Bayesian audits,
 see the original repo (which is public)
 www.github.com/ron-rivest/2017-bayes-audit 
 
+This repo will be used by students in a Fall 2017 UC Berkeley
+course taught by Philip Stark.
+
+Copied material starts here.
+
 # Documentation for multi.py (Bayesian audit support program)
 
 ``multi.py`` is Python3 software (or suite of programs) to support

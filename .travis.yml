@@ -1,0 +1,13 @@
+language: python
+
+python:
+  - 2.7
+  - 3.6
+
+matrix:
+  include:
+    - python: 2.7
+      env: TEST_VAR=1
+
+script:
+  - nosetests tests.py

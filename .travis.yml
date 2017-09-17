@@ -9,4 +9,4 @@ matrix:
       env: RANDOM_SEED=37
 
 script:
-  - nosetests
+  - nosetests test_csv_readers.py

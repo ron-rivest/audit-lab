@@ -8,6 +8,8 @@ matrix:
   include:
     - python: 2.7
       env: TEST_VAR=1
+    - python: 3.6
+      env: RANDOM_SEED=37
 
 script:
-  - nosetests tests.py
+  - nosetests

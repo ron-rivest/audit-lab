@@ -35,7 +35,7 @@ Example: (varlen csv file)
 becomes:
     [ {'A':'1', 'B':'2', 'C':('3',)},
       {'A':'4', 'B':'5', 'C':()},
-      {'A':'6', 'B':'5', 'C':(8,9)},
+      {'A':'6', 'B':'7', 'C':(8,9)},
     ]
 """
 
@@ -50,10 +50,11 @@ def read_csv_file(filename, required_fieldnames=None, varlen=False):
     Read CSV file and check required fieldnames present; varlen if variable-length rows.
     """
 
-    # print("Reading CSV file:", filename)
+    print("Reading CSV file:", filename)
     with open(filename) as file:
         reader = csv.reader(file)
         rows = [row for row in reader]
+        print(rows)
         fieldnames = rows[0]
         rows = rows[1:]
         

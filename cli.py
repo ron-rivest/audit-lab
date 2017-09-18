@@ -68,6 +68,10 @@ def parse_args():
                         action="store_true",
                         help="Run audit based on current info.")
 
+    parser.add_argument("--pause",
+                        action="store_true",
+                        help="Pause after each audit stage to obtain confirmation before proceedings.")
+
     args = parser.parse_args()
     # print("Command line arguments:", args)
     return args

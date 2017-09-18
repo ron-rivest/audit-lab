@@ -9,4 +9,13 @@ matrix:
       env: RANDOM_SEED=37
 
 script:
-  - nosetests test_csv_readers.py
+  - nosetests --with-coverage test_csv_readers.py
+
+install:
+  - pip install codecov
+
+script:
+  - coverage run test_csv_readers.py
+
+after_success:
+  - codecov --token=cde1d454-fe69-41b7-89b6-ccff2010683a

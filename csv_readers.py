@@ -35,7 +35,7 @@ Example: (varlen csv file)
 becomes:
     [ {'A':'1', 'B':'2', 'C':('3',)},
       {'A':'4', 'B':'5', 'C':()},
-      {'A':'6', 'B':'7', 'C':(8,9)},
+      {'A':'6', 'B':'7', 'C':('8','9')},
     ]
 """
 
@@ -54,16 +54,15 @@ def read_csv_file(filename, required_fieldnames=None, varlen=False):
     with open(filename) as file:
         reader = csv.reader(file)
         rows = [row for row in reader]
-        print(rows)
         fieldnames = rows[0]
         rows = rows[1:]
-        
+
         # gather, clean, and trim field names, eliminating blanks
         fieldnames = [ids.clean_id(fieldname) for fieldname in fieldnames]
         while len(fieldnames)>0 and fieldnames[-1]=='':
             fieldnames.pop()
         if len(set(fieldnames)) != len(fieldnames):
-            utils.myerror("Duplicate field name:"+fieldnames)
+            utils.myerror("Duplicate field name:"+str(fieldnames))
 
         # data rows
         row_dicts = []

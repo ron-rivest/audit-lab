@@ -9,10 +9,11 @@ matrix:
       env: RANDOM_SEED=37
 
 script:
-  - nosetests --with-coverage test_csv_readers.py
+  - nosetests --with-coverage --cover-tests test_csv_readers.py
 
 install:
   - pip install codecov
+  - pip install coverage
 
 script:
   - coverage run test_csv_readers.py

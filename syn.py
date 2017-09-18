@@ -142,9 +142,17 @@ def process_args(e, args):
     e.election_name = e.election_dirname
 
     dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+
     if os.path.exists(dirpath):
-        utils.mywarning("Existing directory {} erased.".format(dirpath))
-        shutil.rmtree(dirpath)
+        utils.mywarning("Erasing previous contents of directory {}.".format(dirpath))
+        subdirs = ["1-election-spec",
+                   "2-reported",
+                   "3-audit"]
+        for subdir in subdirs:
+            dirpathx = os.path.join(dirpath, subdir)
+            if os.path.exists(dirpathx):
+                shutil.rmtree(dirpathx)
+                utils.mywarning("Directory {} erased.".format(dirpathx))
     
     if args.syn_type == '1':                        
         syn1.generate_syn_type_1(e, args)

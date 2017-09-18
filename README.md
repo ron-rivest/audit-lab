@@ -1638,6 +1638,7 @@ Here we assume the election data is in the directory
 | ``python3 multi.py --make_audit orders CO-2017-11`` | Produces initial audit order files  |
 | ``python3 multi.py --read_audited CO-2017-11``      | Reads and checks audited votes      |
 | ``python3 multi.py --audit CO-2017-11``             | Runs audit                          |
+| ``python3 multi.py --audit --pause CO-2017-11``     | Runs audit, pausing after each stage |
 
 You can also run
 

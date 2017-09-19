@@ -543,7 +543,7 @@ def audit(e, args):
         mid = e.mids[0]
         risk_bayes.tweak_all(e, mid)
 
-        if not input("Begin new audit stage? (y or n):").startswith('y'):
+        if args.pause and not input("Begin new audit stage? (y or n):").startswith('y'):
             break
         saved_state.write_intermediate_saved_state(e)
         time.sleep(2)              # to ensure next stage_time is new

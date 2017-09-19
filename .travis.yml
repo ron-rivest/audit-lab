@@ -9,12 +9,12 @@ matrix:
       env: RANDOM_SEED=37
 
 install:
-  - pip install codecov
   - pip install coverage
+  - pip install python-coveralls
 
 script:
   - nosetests --with-coverage --cover-tests test_csv_readers.py
   - coverage run test_csv_readers.py
 
 after_success:
-  - codecov --token=cde1d454-fe69-41b7-89b6-ccff2010683a
+  - coveralls

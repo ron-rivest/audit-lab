@@ -26,7 +26,7 @@ import reported
 import syn1
 import syn2
 import utils
-import write_csv
+import csv_writers
 
 class Syn_Params(object):
     """ An object we can hang synthesis generation parameters off of. """

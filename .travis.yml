@@ -8,5 +8,5 @@ matrix:
     - python: 3.6
 
 script:
-  - nosetests
+  - tests/csv_readers_tests.py
 

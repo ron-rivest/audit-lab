@@ -1,6 +1,7 @@
 import os
 import sys
 from io import StringIO
+from contextlib import redirect_stdout
 
 from csv_readers import read_csv_file
 

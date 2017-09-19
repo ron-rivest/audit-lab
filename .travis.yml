@@ -8,9 +8,5 @@ matrix:
     - python: 3.6
 
 script:
-<<<<<<< HEAD
   - tests/csv_readers_tests.py
-=======
-  - nosetests
->>>>>>> upstream/master
 

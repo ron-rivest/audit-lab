@@ -34,7 +34,7 @@ def test_read_csv_file_regular():
     print(result)
     print(expected_mult_empfield)
     # probably would need to create an alias for an empty field/column name
-    assert expected_empfield == result
+    assert expected_mult_empfield == result
 
 def test_read_csv_file_varlen():
     # Testing with varlen set to true

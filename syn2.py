@@ -19,7 +19,7 @@ import audit_orders
 import syn
 import syn1
 import utils
-import write_csv
+import csv_writers
 
 
 def process_spec(e, synpar, L):
@@ -176,6 +176,6 @@ def generate_syn_type_2(e, args):
             print(key)
             print("    ", vars(e)[key])
 
-    write_csv.write_csv(e)
+    csv_writers.write_csv(e)
 
 

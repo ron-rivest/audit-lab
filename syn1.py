@@ -22,7 +22,7 @@ import outcomes
 import reported
 import syn
 import utils
-import write_csv
+import csv_writers
 
 
 """
@@ -450,6 +450,6 @@ def generate_syn_type_1(e, args):
             print(key)
             print("    ", vars(e)[key])
     
-    write_csv.write_csv(e)
+    csv_writers.write_csv(e)
 
 

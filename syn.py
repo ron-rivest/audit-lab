@@ -15,6 +15,7 @@ import argparse
 import copy
 import numpy as np
 import os
+import shutil
 
 import multi
 import audit_orders
@@ -25,7 +26,7 @@ import reported
 import syn1
 import syn2
 import utils
-import write_csv
+import csv_writers
 
 class Syn_Params(object):
     """ An object we can hang synthesis generation parameters off of. """
@@ -140,6 +141,19 @@ def process_args(e, args):
     e.election_dirname = ids.filename_safe(args.election_dirname)
     e.election_name = e.election_dirname
 
+    dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+
+    if os.path.exists(dirpath):
+        utils.mywarning("Erasing previous contents of directory {}.".format(dirpath))
+        subdirs = ["1-election-spec",
+                   "2-reported",
+                   "3-audit"]
+        for subdir in subdirs:
+            dirpathx = os.path.join(dirpath, subdir)
+            if os.path.exists(dirpathx):
+                shutil.rmtree(dirpathx)
+                utils.mywarning("Directory {} erased.".format(dirpathx))
+    
     if args.syn_type == '1':                        
         syn1.generate_syn_type_1(e, args)
     elif args.syn_type == '2':
@@ -147,15 +161,15 @@ def process_args(e, args):
     else:
         print("Illegal syn_type:", args.syn_type)
 
+    print("  Done. Synthetic election written to:", dirpath)
+
 
 if __name__=="__main__":
 
     e = multi.Election()
-
     args = parse_args()
     process_args(e, args)
 
-    filepath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
-    print("  Done. Synthetic election written to:", filepath)
+
 
 

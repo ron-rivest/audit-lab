@@ -1,3 +1,5 @@
+.DS_Store
+*.pyc
 # Python .gitignore from
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # ---
@@ -104,5 +106,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-

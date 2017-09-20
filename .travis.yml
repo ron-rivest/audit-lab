@@ -6,7 +6,15 @@ python:
 matrix:
   include:
     - python: 3.6
+      env: RANDOM_SEED=37
+
+install:
+  - pip install coverage
+  - pip install python-coveralls
 
 script:
-  - nosetests
+  - nosetests --with-coverage --cover-tests test_csv_readers.py
+  - coverage run test_csv_readers.py
 
+after_success:
+  - coveralls

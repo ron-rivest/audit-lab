@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/evanlimanto/audit-lab.svg?branch=master)](https://travis-ci.org/evanlimanto/audit-lab)
+
 Note: This repo "audit-lab" was created initially 2017-09-04
 as a copy of
 www.github.com/ron-rivest/2017-bayes-audit/2017-code

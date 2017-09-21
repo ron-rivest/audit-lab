@@ -33,7 +33,7 @@ def tester(se):
     syn2.write_reported(se)
     syn2.write_audit(se)
 
-def test_scale(k):
+def scale_test(k):
 
     """
     For various values of k = 3, 4, ... 
@@ -64,7 +64,7 @@ def test_scale(k):
 
 
 for k in range(3, 8):
-    test_scale(k)
+    scale_test(k)
 
     
     

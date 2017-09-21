@@ -13,8 +13,9 @@ install:
   - pip install python-coveralls
 
 script:
-  - nosetests --with-coverage --cover-tests test_csv_readers.py
-  - coverage run test_csv_readers.py
+  - nosetests --with-coverage --cover-tests tests/test_csv_readers.py
+  - coverage run tests/test_csv_readers.py
 
 after_success:
   - coveralls
+  

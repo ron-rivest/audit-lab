@@ -85,7 +85,7 @@ def write_audit_order(e, pbcid):
     dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname,
                            "3-audit", "32-audit-orders")
     os.makedirs(dirpath, exist_ok=True)
-    ds = utils.date_string()
+    ds = utils.datetime_string()
     safe_pbcid = ids.filename_safe(pbcid)
     filename = os.path.join(dirpath, "audit-order-"+safe_pbcid+"-"+ds+".csv")
     with open(filename, "w") as file:

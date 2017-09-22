@@ -105,5 +105,5 @@ if __name__=="__main__":
 
     e = multi.Election()
     args = cli_syn.parse_args()
-    cli_syn.process_args(e, args)
+    cli_syn.dispatch(e, args)
 

@@ -14,7 +14,6 @@ install:
 
 script:
   - nosetests --with-coverage . tests
-  - coverage run tests/test_csv_readers.py
 
 after_success:
   - coveralls

@@ -502,10 +502,10 @@ def main():
     utils.start_datetime_string = utils.datetime_string()
     print("Starting date-time:", utils.start_datetime_string)
 
-    args = cli.parse_args()
+    args = cli_multi.parse_args()
     e = Election()
     try:
-        cli.process_args(e, args)
+        cli_multi.process_args(e, args)
     finally:
         utils.close_myprint_files()
 

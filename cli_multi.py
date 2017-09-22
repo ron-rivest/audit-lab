@@ -1,6 +1,6 @@
-# cli.py
-# Ronald L. Rivest (with Karim Husayn Karimi)
-# July 22, 2017
+# cli_multi.py
+# Ronald L. Rivest
+# July 22, 2017 (rev. September 21, 2017)
 # python3
 
 """

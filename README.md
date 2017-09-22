@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/evanlimanto/audit-lab.svg?branch=master)](https://travis-ci.org/evanlimanto/audit-lab)
+[![Coverage Status](https://coveralls.io/repos/evanlimanto/audit-lab/badge.png)](https://coveralls.io/github/evanlimanto/audit-lab)
 
 Note: This repo "audit-lab" was created initially 2017-09-04
 as a copy of

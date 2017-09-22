@@ -32,7 +32,7 @@ import os
 import sys
 
 import audit
-import cli
+import cli_multi
 import election_spec
 import outcomes
 import planner

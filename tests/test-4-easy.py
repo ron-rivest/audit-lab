@@ -1,0 +1,50 @@
+""" test-4-easy.py
+    test for synthesizing (wtth syn2.py) and running audit on election '4-easy'.
+"""
+
+import sys
+sys.path.append("../..")
+
+import cli_syn
+import cli_multi
+import multi
+import utils
+
+
+class Args(object):
+    """ Class subclassed from object so we can hang attributes off of it.
+    """
+    pass
+
+
+def test_4_easy():
+    """ Generate election 4-easy using syn2 then run audit on it with multi.
+    """
+
+    e = multi.Election()
+
+    utils.warnings_given = 0   # prevent earlier nosetest errors from causing problems.
+
+    # Generate election from object storing pseudo command-line arguments.
+    syn_args = Args()
+    syn_args.election_dirname = '4-easy'
+    syn_args.syn_type = '2'
+    cli_syn.dispatch(e, syn_args)
+
+    # Audit election
+    multi_args = Args()
+    multi_args.election_dirname = '4-easy'
+    multi_args.election_name = '4-easy'
+    multi_args.elections_root = './elections'
+    multi_args.set_audit_seed =  42
+    multi_args.read_election_spec = False
+    multi_args.read_reported = False
+    multi_args.make_audit_orders = False
+    multi_args.read_audited = False
+    multi_args.audit = True
+    multi_args.pause = False
+    cli_multi.dispatch(e, multi_args)
+
+
+    
+                        

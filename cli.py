@@ -83,7 +83,7 @@ def process_args(e, args):
 
     e.election_name = args.election_name
 
-    ELECTIONS_ROOT = args.elections_root
+    multi.ELECTIONS_ROOT = args.elections_root
 
     if args.set_audit_seed != None:
         audit.set_audit_seed(e, args.set_audit_seed)

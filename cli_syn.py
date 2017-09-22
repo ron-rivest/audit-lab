@@ -44,7 +44,7 @@ def parse_args():
 
 
 
-def process_args(e, args):
+def dispatch(e, args):
 
     e.election_dirname = ids.filename_safe(args.election_dirname)
     e.election_name = e.election_dirname

@@ -505,7 +505,7 @@ def main():
     args = cli_multi.parse_args()
     e = Election()
     try:
-        cli_multi.process_args(e, args)
+        cli_multi.dispatch(e, args)
     finally:
         utils.close_myprint_files()
 

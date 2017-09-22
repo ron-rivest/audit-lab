@@ -83,7 +83,9 @@ def mywarning(msg):
     """
 
     global warnings_given
-    warnings_given += 1
+    # kill counter for now; it causes some problems with nosetests
+    # and in any case we'll be moving over to warnings.warn instead of mywarning.
+    # warnings_given += 1
     print("WARNING:", msg)
 
 

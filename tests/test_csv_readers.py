@@ -32,7 +32,7 @@ def test_csv_varlen():
     assert read_csv_file(test_filename, varlen=True) == expected
     os.remove(test_filename)
 
-def test_csv_oneEntry_len():
+def test_csv_one_entry_len():
     # One header with one entry
     contents = "A\n\n1"
     expected = [
@@ -44,7 +44,18 @@ def test_csv_oneEntry_len():
     assert read_csv_file(test_filename) == expected
     os.remove(test_filename)
 
-def test_csv_emptyEntries_len():
+def test_csv_blank_fields_len():
+    # Empty headers and empty entries
+    contents = "A,B,C,,,\n1,2,,,,"
+    expected = [
+        {'A':'1', 'B':'2', 'C':''}
+    ]
+    with open(test_filename, "w") as f:
+        f.write(contents)
+    assert read_csv_file(test_filename) == expected
+    os.remove(test_filename)
+
+def test_csv_empty_entries_len():
     # 5 headers with 2 entries in 1 line
     contents = "A,B,C,D,E\n1,2\n1,2,3,4,5"
     expected = [
@@ -56,7 +67,7 @@ def test_csv_emptyEntries_len():
     assert read_csv_file(test_filename) == expected
     os.remove(test_filename)
 
-def test_csv_extraEntries_len():
+def test_csv_extra_entries_len():
     # non-varlen error when more entries than fields
     contents = "A,B\n1,2,3"
     expected = [
@@ -80,7 +91,7 @@ def test_csv_empty_line_len():
     assert read_csv_file(test_filename) == expected
     os.remove(test_filename)
 
-def test_csv_tooShortRow_varlen():
+def test_csv_short_row_varlen():
     contents = "A,B,C\n1\n1,2,3"
     expected = [
         {'A':'1','B':'2','C':'3'}
@@ -102,7 +113,7 @@ def test_csv_tooShortRow_varlen():
     assert s == "\n".join(lines)
     os.remove(test_filename)
 
-def test_csv_longTuple_varlen():
+def test_csv_long_tuple_varlen():
     # Testing the tupling of the last elements if longer than header
     # Note: Documentation for varlen tuples, inside the tuples should be STRING, not INT
     contents = "A,B,C\n1,2,3\n4,5\n6,7,8,9,10,11,12,13,14,15"

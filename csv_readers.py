@@ -50,7 +50,7 @@ def read_csv_file(filename, required_fieldnames=None, varlen=False):
     Read CSV file and check required fieldnames present; varlen if variable-length rows.
     """
 
-    print("Reading CSV file:", filename)
+    # print("Reading CSV file:", filename)
     with open(filename) as file:
         reader = csv.reader(file)
         rows = [row for row in reader]

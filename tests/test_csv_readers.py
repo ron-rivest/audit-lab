@@ -97,7 +97,6 @@ def test_csv_tooShortRow_varlen():
     s = f.getvalue()
 
     lines = [
-        "Reading CSV file: test_file.csv",
         "WARNING: Ignoring too-short row:{}\n".format(['1'])
     ]
     assert s == "\n".join(lines)
@@ -136,7 +135,6 @@ def test_csv_required_fieldname_missing():
     s = f.getvalue()
 
     lines = [
-        "Reading CSV file: test_file.csv",
         "FATAL ERROR: File {} has fieldnames {}, while {} are required. Missing {}.\n".format(
             test_filename, fieldnames, required_fieldnames, missing_fieldnames)
     ]
@@ -161,7 +159,6 @@ def test_csv_extra_required_fieldname():
     s = f.getvalue()
 
     lines = [
-        "Reading CSV file: test_file.csv",
         "WARNING: File {} has extra fieldnames (ignored): {}\n".format(test_filename, extra_fieldnames)
     ]
     assert s == "\n".join(lines)
@@ -181,7 +178,6 @@ def test_csv_duplicate_field():
     s = f.getvalue()
 
     lines = [
-        "Reading CSV file: test_file.csv",
         "FATAL ERROR: Duplicate field name:{}\n".format(['A', 'B', 'B'])
     ]
     assert s == "\n".join(lines)

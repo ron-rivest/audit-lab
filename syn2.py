@@ -57,7 +57,7 @@ def process_spec(e, synpar, L):
             e.params_c[cid] = ""
             e.write_ins_c[cid] = "no"
             e.selids_c[cid] = {}
-            e.ro_c[cid] = ("Alice",)     # FIX
+            e.ro_c[cid] = av      # first av becomes reported outcome
             mid = "M{}-{}".format(len(e.cids), cid)
             e.mids.append(mid)
             e.cid_m[mid] = cid

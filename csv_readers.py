@@ -103,22 +103,4 @@ def read_csv_file(filename, required_fieldnames=None, varlen=False):
                                 .format(filename, extra_fieldnames))
         return row_dicts
 
-
-if __name__=="__main__":
-
-    filename = "test_data/csv_readers_test_reg.csv"
-    print("Regular (non-varlen) csv file:", filename)
-    for row in read_csv_file(filename):
-        for fieldname in sorted(row):
-            print("{}:'{}' ".format(fieldname, row[fieldname]), end='')
-        print()
-
-    filename = "test_data/csv_readers_test_varlen.csv"
-    print("Varlen csv file:", filename)
-    for row in read_csv_file(filename, varlen=True):
-        for fieldname in sorted(row):
-            print("{}:'{}' ".format(fieldname, row[fieldname]), end='')
-        print()
-
-
     

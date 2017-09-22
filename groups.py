@@ -1,6 +1,6 @@
 # groups.py
 # Ronald L. Rivest
-# July 25, 2017
+# July 25, 2017 (rev Sept. 21, 2017)
 # python3
 
 """
@@ -34,8 +34,9 @@ def expand_contest_group_defs(e):
     and the gids are the "nonterminals".  Each gid generates exactly one
     string.
 
-    The reason for using ordered lists here is that this may reflect the
-    order in which the contests appear on a ballot.
+    The reason for using ordered lists here (as opposed to sets)
+    is that this may reflect the order in which the contests appear 
+    on a ballot.
     """
 
     e.cids_g = {}
@@ -51,9 +52,12 @@ def expand_contest_group_defs(e):
 def reachable_from(e, gid, gids, cids, stack):
     """
     Find all gids and cids reachable from initial 
-    gid in 0 or more steps.
+    gid in 0 or more steps.  Main output of interest
+    is the input list "cids", which has all reachable
+    contests appended to it.  
 
     This works even if the graph contains cycles.
+    Algorithm is depth-first search (DFS).
     """
 
     if gid in gids:
@@ -62,68 +66,13 @@ def reachable_from(e, gid, gids, cids, stack):
         return
     gids.add(gid)
     for cgid in e.cgids_g[gid]:
+        # Note: 'cgid' means 'contest or group id'
         if cgid in e.cids:
             cids.append(cgid)
         else:
             stack.append(gid)
             reachable_from(e, cgid, gids, cids, stack)
             stack.pop()
-
-def test_expand():
-
-    e = multi.Election()
-    e.gids = [1, 2, 3, 4, 5, 6, 7]
-    e.cids = [11, 22, 33, 44, 55, 66, 77]
-    e.cgids_g[1] = [11, 2]
-    e.cgids_g[2] = [22, 3, 4]
-    e.cgids_g[3] = [33]
-    e.cgids_g[4] = [44, 5]
-    e.cgids_g[5] = [55, 4]
-    e.cgids_g[6] = [66, 1, 7]
-    e.cgids_g[7] = [77, 3]
-
-    print("Input:")
-    print("  cids:", e.cids)
-    print("  gids:", e.gids)
-    for gid in e.gids:
-        print("    {}->{}".format(gid, e.cgids_g[gid]))
-
-    expand_contest_group_defs(e)
-
-    print("Output:")
-    for gid in e.gids:
-        print("    {}->{}".format(gid, e.cids_g[gid]))
-
-def test_expand_2():
-
-    e = multi.Election()
-    e.gids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    e.cids = [110, 220, 330, 440, 550, 660, 770, 880, 990, 10100, 11110, 12120]
-    e.cgids_g[1] = [110, 2, 5, 6]
-    e.cgids_g[2] = [220, 3, 11, 12]
-    e.cgids_g[3] = [330, 4, 9, 10]
-    e.cgids_g[4] = [440, 1, 7, 8]
-    e.cgids_g[5] = [550]
-    e.cgids_g[6] = [660]
-    e.cgids_g[7] = [770]
-    e.cgids_g[8] = [880]
-    e.cgids_g[9] = [990]
-    e.cgids_g[10] = [10100]
-    e.cgids_g[11] = [11110]
-    e.cgids_g[12] = [12120]
-
-
-    print("Input:")
-    print("  cids:", e.cids)
-    print("  gids:", e.gids)
-    for gid in e.gids:
-        print("    {}->{}".format(gid, e.cgids_g[gid]))
-
-    expand_contest_group_defs(e)
-
-    print("Output:")
-    for gid in e.gids:
-        print("    {}->{}".format(gid, e.cids_g[gid]))
 
 
 def expand_gids_in_list(e, L):
@@ -136,18 +85,14 @@ def expand_gids_in_list(e, L):
     (like a contest-free grammar, if there are no cycles).
     """
 
-    L = []
+    ans = []
     for cgid in L:
         if cgid in e.cids:
-            L.append(cgid)
+            ans.append(cgid)
         else:
             for cid in e.cids_g[cgid]:
-                L.append(cid)
-    return L
+                ans.append(cid)
+    return ans
 
 
-if __name__ == "__main__":
-
-    test_expand()
-    test_expand_2()
 

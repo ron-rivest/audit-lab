@@ -22,7 +22,6 @@ def graph_1(e):
 
 def test_expand_contest_group_defs():
 
-    print("test_expand_contest_groups_defs")
     e = multi.Election()
     graph_1(e)
 
@@ -57,7 +56,6 @@ def graph_2(e):
 
 def test_expand_contest_groups_defs_2():
 
-    print("test_expand_contest_groups_defs_2")
     e = multi.Election()
     graph_2(e)
 
@@ -78,8 +76,6 @@ def test_expand_contest_groups_defs_2():
 
 
 def test_expand_gids_in_list():
-
-    print("test_expand_gids_in_list")
 
     e = multi.Election()
     graph_1(e)

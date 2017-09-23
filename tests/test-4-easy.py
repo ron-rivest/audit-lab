@@ -21,17 +21,18 @@ def test_4_easy():
     """ Generate election 4-easy using syn2 then run audit on it with multi.
     """
 
-    e = multi.Election()
 
     utils.warnings_given = 0   # prevent earlier nosetest errors from causing problems.
 
     # Generate election from object storing pseudo command-line arguments.
+    e = multi.Election()
     syn_args = Args()
     syn_args.election_dirname = '4-easy'
     syn_args.syn_type = '2'
     cli_syn.dispatch(e, syn_args)
 
     # Audit election
+    e = multi.Election()
     multi_args = Args()
     multi_args.election_dirname = '4-easy'
     multi_args.election_name = '4-easy'

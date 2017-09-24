@@ -64,31 +64,6 @@ def close_myprint_files():
             del myprint_files[output_file_name]
 
 
-# error and warning messages
-
-
-def myerror(msg):
-    """ Print error message and halt immediately """
-
-    print("FATAL ERROR:", msg)
-    quit()
-
-
-warnings_given = 0
-
-
-def mywarning(msg):
-    """ Print error message, but keep going.
-        Keep track of how many warnings have been given.
-    """
-
-    global warnings_given
-    # kill counter for now; it causes some problems with nosetests
-    # and in any case we'll be moving over to warnings.warn instead of mywarning.
-    # warnings_given += 1
-    print("WARNING:", msg)
-
-
 ##############################################################################
 # Input/output at the file-handling level
 ##############################################################################
@@ -140,13 +115,13 @@ def greatest_name(dirpath,
             selected_filename = filename
     if selected_filename == "":
         if dir_wanted == False:
-            myerror(("No files in `{}` have a name starting with `{}`"
-                     "and ending with `{}`.")
-                    .format(dirpath, startswith, endswith))
+            raise FileNotFoundError(("No files in `{}` have a name starting with `{}`"
+                                     "and ending with `{}`.")
+                                     .format(dirpath, startswith, endswith))
         else:
-            myerror (("No directories in `{}` have a name starting with `{}`"
-                      "and ending with `{}`.")
-                     .format(dirpath, startswith, endswith))
+            raise FileNotFoundError(("No directories in `{}` have a name starting with `{}`"
+                                     "and ending with `{}`.")
+                                     .format(dirpath, startswith, endswith))
     return selected_filename
 
 
@@ -223,14 +198,11 @@ def convert_int_to_32_bit_numpy_array(v):
     Example: input 2**64 + 5 yields np.array([5, 0, 1], dtype=int)
     """
 
-    try:
-        v = int(v)
-        if v<0:
-            raise ValueError
-    except ValueError:
-        myerror(("convert_int_to_32_bit_numpy_array: "
-                 "{} is not a nonnegative integer, "
-                 "or convertible to one.").format(v))
+    v = int(v)
+    if v<0:
+        raise ValueError(("convert_int_to_32_bit_numpy_array: "
+                          "{} is not a nonnegative integer, "
+                          "or convertible to one.").format(v))
     v_parts = []
     radix = 2**32
     while v>0:
@@ -238,7 +210,7 @@ def convert_int_to_32_bit_numpy_array(v):
         v = v // radix
     # note: v_parts will be empty list if v==0, that is OK
     return np.array(v_parts, dtype=int)
-        
+
 
 def RandomState(seed):
     """

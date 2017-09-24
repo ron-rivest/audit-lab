@@ -152,9 +152,9 @@ def generate_election_spec_contests(e, synpar):
             for selid in e.selids_c[cid]:
                 utils.nested_set(e.votes_c, [cid, (selid,)], True)
         else:
-            utils.myerror(("Contest {} is not plurality---"
-                           "Can't generate votes for it.")
-                          .format(cid))
+            raise ValueError(("Contest {} is not plurality---"
+                              "Can't generate votes for it.")
+                              .format(cid))
 
 
 def generate_election_spec_contest_groups(e, synpar):

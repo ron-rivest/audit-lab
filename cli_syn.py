@@ -3,12 +3,12 @@
 import argparse
 import os
 import shutil
+import warnings
 
 import ids
 import multi
 import syn1
 import syn2
-import utils
 
 def parse_args():
 
@@ -52,7 +52,7 @@ def dispatch(e, args):
     dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
 
     if os.path.exists(dirpath):
-        utils.mywarning("Erasing previous contents of directory {}.".format(dirpath))
+        warnings.warn("Erasing previous contents of directory {}.".format(dirpath))
         subdirs = ["1-election-spec",
                    "2-reported",
                    "3-audit"]
@@ -60,9 +60,9 @@ def dispatch(e, args):
             dirpathx = os.path.join(dirpath, subdir)
             if os.path.exists(dirpathx):
                 shutil.rmtree(dirpathx)
-                utils.mywarning("Directory {} erased.".format(dirpathx))
-    
-    if args.syn_type == '1':                        
+                warnings.warn("Directory {} erased.".format(dirpathx))
+
+    if args.syn_type == '1':
         syn1.generate_syn_type_1(e, args)
     elif args.syn_type == '2':
         syn2.generate_syn_type_2(e, args)

@@ -1,7 +1,9 @@
+# User-defined ignores
 .DS_Store
 *~
 *.pyc
 .coverage
+
 # Python .gitignore from
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # ---

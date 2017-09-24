@@ -5,8 +5,7 @@
 
 import multi
 import groups
-import utils
-
+import warnings
 
 def graph_1(e):
 
@@ -25,7 +24,11 @@ def test_expand_contest_group_defs():
     e = multi.Election()
     graph_1(e)
 
-    groups.expand_contest_group_defs(e)
+    with warnings.catch_warnings(record=True) as w:
+        groups.expand_contest_group_defs(e)
+        assert len(w) == 2
+        assert str(w[0].message) == 'Group id 4 is in a cycle!'
+        assert str(w[1].message) == 'Group id 5 is in a cycle!'
 
     assert e.cids_g[1] == [11, 22, 33, 44, 55]
     assert e.cids_g[2] == [22, 33, 44, 55]
@@ -59,7 +62,13 @@ def test_expand_contest_groups_defs_2():
     e = multi.Election()
     graph_2(e)
 
-    groups.expand_contest_group_defs(e)
+    with warnings.catch_warnings(record=True) as w:
+        groups.expand_contest_group_defs(e)
+        assert len(w) == 4
+        assert str(w[0].message) == 'Group id 1 is in a cycle!'
+        assert str(w[1].message) == 'Group id 2 is in a cycle!'
+        assert str(w[2].message) == 'Group id 3 is in a cycle!'
+        assert str(w[3].message) == 'Group id 4 is in a cycle!'
 
     assert e.cids_g[1] == [110, 220, 330, 440, 770, 880, 990, 10100, 11110, 12120, 550, 660]
     assert e.cids_g[2] == [220, 330, 440, 110, 550, 660, 770, 880, 990, 10100, 11110, 12120]
@@ -80,14 +89,11 @@ def test_expand_gids_in_list():
     e = multi.Election()
     graph_1(e)
 
-    groups.expand_contest_group_defs(e)
+    with warnings.catch_warnings(record=True) as w:
+        groups.expand_contest_group_defs(e)
+        assert len(w) == 2
+        assert str(w[0].message) == 'Group id 4 is in a cycle!'
+        assert str(w[1].message) == 'Group id 5 is in a cycle!'
 
     assert groups.expand_gids_in_list(e, [1, 22, 3, 4, 55, 66]) \
         == [11, 22, 33, 44, 55, 22, 33, 44, 55, 55, 66]
-    
-    
-    
-
-
-
-

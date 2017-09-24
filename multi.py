@@ -25,19 +25,7 @@ it could also be run locally in a county.
 
 # MIT License
 
-import datetime
-import json
-import numpy as np
-import os
-import sys
-
-import audit
 import cli_multi
-import election_spec
-import outcomes
-import planner
-import reported
-import snapshot
 import utils
 
 ##############################################################################

@@ -1,6 +1,6 @@
 # syn2.py
 # Ronald L. Rivest
-# August 5, 2017
+# August 5, 2017 (rev. Sep. 22, 2017)
 # python3
 
 """
@@ -46,6 +46,10 @@ def process_spec(e, synpar, L):
         signifying that they can't win the contest.
     The votes rv and av are arbitrary tuples, and may contain
     0, 1, 2, or more selection ids.
+
+    The FIRST av for a given contest becomes the "reported winner" 
+    for that contest, even if "num" is zero for that row or if the
+    reported or actual votes don't show that vote as the "winner".
     """
 
     for (cid, pbcid, rv, av, num) in L:
@@ -57,7 +61,7 @@ def process_spec(e, synpar, L):
             e.params_c[cid] = ""
             e.write_ins_c[cid] = "no"
             e.selids_c[cid] = {}
-            e.ro_c[cid] = ("Alice",)     # FIX
+            e.ro_c[cid] = av      # first av becomes reported outcome
             mid = "M{}-{}".format(len(e.cids), cid)
             e.mids.append(mid)
             e.cid_m[mid] = cid

@@ -56,6 +56,7 @@ The values are sanity checked, and put into the Election data structure (e)
 from multi.py
 """
 
+import logging
 import os
 import warnings
 
@@ -63,6 +64,9 @@ import multi
 import csv_readers
 import groups
 import utils
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def read_election_spec_general(e, election_dirname):
@@ -101,7 +105,7 @@ def read_election_spec_general(e, election_dirname):
 
 def test_read_election_spec_general(e):
 
-    # print("test_read_election_spec_general")
+    # logger.info("test_read_election_spec_general")
     read_election_spec_general(e, "ex1")
 
 
@@ -136,7 +140,7 @@ def read_election_spec_contests(e):
 
 def test_read_election_spec_contests(e):
 
-    # print("test_read_election_spec_contests")
+    # logger.info("test_read_election_spec_contests")
     read_election_spec_contests(e)
 
 
@@ -162,7 +166,7 @@ def read_election_spec_contest_groups(e):
 
 def test_read_election_spec_contest_groups(e):    
 
-    # print("test_read_contest_groups")
+    # logger.info("test_read_contest_groups")
     read_election_spec_contest_groups(e)
 
 
@@ -190,7 +194,7 @@ def read_election_spec_collections(e):
 
 def test_read_election_spec_collections(e):
 
-    # print("test_read_collections")
+    # logger.info("test_read_collections")
     read_election_spec_collections(e)
 
 
@@ -304,40 +308,40 @@ def check_election_spec(e):
 
 
 def show_election_spec(e):
-    utils.myprint("====== Election spec ======")
-    utils.myprint("Election name: (e.election_name):")
-    utils.myprint("    {}".format(e.election_name))
-    utils.myprint("Election dirname (e.election_dirname):")
-    utils.myprint("    {}".format(e.election_dirname))
-    utils.myprint("Election date (e.election date):")
-    utils.myprint("    {}".format(e.election_date))
-    utils.myprint("Election URL (e.election_url):")
-    utils.myprint("    {}".format(e.election_url))
-    utils.myprint("Number of contests:")
-    utils.myprint("    {}".format(len(e.cids)))
-    utils.myprint("Contest ids with contest type, additional parameters, and write-ins mode")
-    utils.myprint("(e.cids, e.contest_type_c, e.params_c, e.write_ins_c):")
+    logger.info("====== Election spec ======")
+    logger.info("Election name: (e.election_name):")
+    logger.info("    {}".format(e.election_name))
+    logger.info("Election dirname (e.election_dirname):")
+    logger.info("    {}".format(e.election_dirname))
+    logger.info("Election date (e.election date):")
+    logger.info("    {}".format(e.election_date))
+    logger.info("Election URL (e.election_url):")
+    logger.info("    {}".format(e.election_url))
+    logger.info("Number of contests:")
+    logger.info("    {}".format(len(e.cids)))
+    logger.info("Contest ids with contest type, additional parameters, and write-ins mode")
+    logger.info("(e.cids, e.contest_type_c, e.params_c, e.write_ins_c):")
     for cid in e.cids:
-        utils.myprint("    {} ({}, {} winner(s), {} write-ins)"
+        logger.info("    {} ({}, {} winner(s), {} write-ins)"
                       .format(cid, e.contest_type_c[cid], e.params_c[cid], e.write_ins_c[cid]))
-    utils.myprint("Valid selection ids for each cid (e.selids_c):")
+    logger.info("Valid selection ids for each cid (e.selids_c):")
     for cid in e.cids:
-        utils.myprint("    {}: ".format(cid), end='')
-        utils.myprint(", ".join(sorted(e.selids_c[cid])))
-    utils.myprint("Number of paper ballot collections:")
-    utils.myprint("    {}".format(len(e.pbcids)))
-    utils.myprint("Paper ballot collection ids (e.pbcids), CVR types (e.cvr_type_p), and managers (e.manager_p):")
+        logger.info("    {}: ".format(cid), end='')
+        logger.info(", ".join(sorted(e.selids_c[cid])))
+    logger.info("Number of paper ballot collections:")
+    logger.info("    {}".format(len(e.pbcids)))
+    logger.info("Paper ballot collection ids (e.pbcids), CVR types (e.cvr_type_p), and managers (e.manager_p):")
     for pbcid in sorted(e.pbcids):
-        utils.myprint("    {} ({}, Manager:{})"
+        logger.info("    {} ({}, Manager:{})"
                       .format(pbcid, e.cvr_type_p[pbcid], e.manager_p[pbcid]))
-    utils.myprint("Required pbcids for each cid (e.required_pbcid_c):")
+    logger.info("Required pbcids for each cid (e.required_pbcid_c):")
     for cid in e.cids:
-        utils.myprint("    {}: ".format(cid), end='')
-        utils.myprint(", ".join(sorted(e.required_pbcid_c[cid])))
-    utils.myprint("Possible pbcids for each cid (e.possible_pbcid_c):")
+        logger.info("    {}: ".format(cid), end='')
+        logger.info(", ".join(sorted(e.required_pbcid_c[cid])))
+    logger.info("Possible pbcids for each cid (e.possible_pbcid_c):")
     for cid in e.cids:
-        utils.myprint("    {}: ".format(cid), end='')
-        utils.myprint(", ".join(sorted(e.possible_pbcid_c[cid])))
+        logger.info("    {}: ".format(cid), end='')
+        logger.info(", ".join(sorted(e.possible_pbcid_c[cid])))
 
 
 

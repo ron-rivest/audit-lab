@@ -33,7 +33,7 @@ There are three file types here:
 See associated file README for file formats.
 """
 
-
+import logging
 import os
 import warnings
 
@@ -41,6 +41,9 @@ import multi
 import csv_readers
 import ids
 import utils
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 ##############################################################################
@@ -399,29 +402,29 @@ def check_audited_votes(e):
 
 def show_reported(e):
 
-    utils.myprint("====== Reported election data ======")
+    logger.info("====== Reported election data ======")
 
-    utils.myprint("Total reported votes for each vote by cid and pbcid (e.rn_cpr):")
+    logger.info("Total reported votes for each vote by cid and pbcid (e.rn_cpr):")
     for cid in e.cids:
         for pbcid in sorted(e.possible_pbcid_c[cid]):
-            utils.myprint("    {}.{}: ".format(cid, pbcid), end='')
+            logger.info("    {}.{}: ".format(cid, pbcid), end='')
             for vote in sorted(e.rn_cpr[cid][pbcid]):
-                utils.myprint("{}:{} ".format(
+                logger.info("{}:{} ".format(
                     vote, e.rn_cpr[cid][pbcid][vote]), end='')
-            utils.myprint()
+            logger.info()
 
-    utils.myprint("Total votes cast for each cid (e.rn_c):")
+    logger.info("Total votes cast for each cid (e.rn_c):")
     for cid in e.cids:
-        utils.myprint("    {}: {}".format(cid, e.rn_c[cid]))
+        logger.info("    {}: {}".format(cid, e.rn_c[cid]))
 
-    utils.myprint("Total cast for each vote for each cid (e.rn_cr):")
+    logger.info("Total cast for each vote for each cid (e.rn_cr):")
     for cid in e.cids:
-        utils.myprint("    {}: ".format(cid), end='')
+        logger.info("    {}: ".format(cid), end='')
         for vote in sorted(e.rn_cr[cid]):
-            utils.myprint("{}:{} ".format(vote, e.rn_cr[cid][vote]), end='')
-        utils.myprint()
+            logger.info("{}:{} ".format(vote, e.rn_cr[cid][vote]), end='')
+        logger.info()
 
-    utils.myprint("Reported outcome for each cid (e.ro_c):")
+    logger.info("Reported outcome for each cid (e.ro_c):")
     for cid in e.cids:
-        utils.myprint("    {}:{}".format(cid, e.ro_c[cid]))
+        logger.info("    {}:{}".format(cid, e.ro_c[cid]))
 

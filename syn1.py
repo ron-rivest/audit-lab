@@ -14,6 +14,7 @@ synpar is an object of type syn.Syn_Parameters
 """
 
 import copy
+import logging
 import numpy as np
 
 import audit_orders
@@ -23,6 +24,9 @@ import reported
 import syn
 import utils
 import csv_writers
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 """
@@ -447,8 +451,8 @@ def generate_syn_type_1(e, args):
     debug = False
     if debug:
         for key in sorted(vars(e)):
-            print(key)
-            print("    ", vars(e)[key])
+            logger.info(key)
+            logger.info("    ", vars(e)[key])
     
     csv_writers.write_csv(e)
 

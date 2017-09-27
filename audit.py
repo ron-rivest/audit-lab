@@ -7,6 +7,7 @@
 Routines to work with multi.py on post-election audits.
 """
 
+import logging
 import os
 import warnings
 import time
@@ -19,6 +20,10 @@ import planner
 import risk_bayes
 import saved_state
 import utils
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 ##############################################################################
@@ -97,16 +102,16 @@ def draw_sample(e):
 
 def show_sample_counts(e):
 
-    utils.myprint("    Total sample counts by Contest.PaperBallotCollection[reported selection]"
-            "and actual selection:")
+    logger.info("    Total sample counts by Contest.PaperBallotCollection[reported selection]"
+                "and actual selection:")
     for cid in e.cids:
         for pbcid in sorted(e.possible_pbcid_c[cid]):
             tally2 = e.sn_tcpra[e.stage_time][cid][pbcid]
             for r in sorted(tally2.keys()):  # r = reported vote
-                utils.myprint("      {}.{}[{}]".format(cid, pbcid, r), end='')
+                logger.info("      {}.{}[{}]".format(cid, pbcid, r), end='')
                 for a in sorted(tally2[r].keys()):
-                    utils.myprint("  {}:{}".format(a, tally2[r][a]), end='')
-                utils.myprint("  total:{}".format(e.sn_tcpr[e.stage_time][cid][pbcid][r]))
+                    logger.info("  {}:{}".format(a, tally2[r][a]), end='')
+                logger.info("  total:{}".format(e.sn_tcpr[e.stage_time][cid][pbcid][r]))
 
 
 ##############################################################################
@@ -144,10 +149,10 @@ def show_risks_and_statuses(e):
     Show election and contest statuses for current stage. 
     """
 
-    utils.myprint(("    Risk (that reported outcome is wrong)"
+    logger.info(("    Risk (that reported outcome is wrong)"
                    "and measurement status per mid:"))
     for mid in e.mids:
-        utils.myprint("     ",
+        logger.info("     ",
                       mid,
                       e.cid_m[mid],
                       e.risk_method_m[mid],
@@ -156,7 +161,7 @@ def show_risks_and_statuses(e):
                       "(limits {},{})".format(e.risk_limit_m[mid],
                                               e.risk_upset_m[mid]),
                       e.status_tm[e.stage_time][mid])
-    utils.myprint("    Election status:", e.election_status_t[e.stage_time])
+    logger.info("    Election status:", e.election_status_t[e.stage_time])
 
 
 ##############################################################################
@@ -243,7 +248,7 @@ def read_audit_spec_contest(e, args):
                   "Param 1",
                   "Param 2"]          
     rows = csv_readers.read_csv_file(file_pathname, fieldnames, varlen=False)
-    print("read_audit_spec_contest: e.mid:", e.mids)
+    logger.info("read_audit_spec_contest: e.mid:", e.mids)
     for row in rows:
         mid = row["Measurement id"]
         e.mids.append(mid)
@@ -322,15 +327,15 @@ def check_audit_spec(e):
 
 def show_audit_spec(e):
 
-    utils.myprint("====== Audit spec ======")
+    logger.info("====== Audit spec ======")
 
-    utils.myprint("Seed for audit pseudorandom number generation (e.audit_seed):")
-    utils.myprint("    {}".format(e.audit_seed))
+    logger.info("Seed for audit pseudorandom number generation (e.audit_seed):")
+    logger.info("    {}".format(e.audit_seed))
 
-    utils.myprint(("Risk Measurement ids (e.mids) with contest,"
+    logger.info(("Risk Measurement ids (e.mids) with contest,"
                    "method, risk limit, and upset threshold, and sampling mode:"))
     for mid in e.mids:
-        utils.myprint("    {}: {}, {}, {}, {}, {}"
+        logger.info("    {}: {}, {}, {}, {}, {}"
                       .format(mid, 
                               e.cid_m[mid],
                               e.risk_method_m[mid],
@@ -338,23 +343,23 @@ def show_audit_spec(e):
                               e.risk_upset_m[mid],
                               e.sampling_mode_m[mid]))
 
-    utils.myprint("Max number of ballots audited/day (e.max_audit_rate_p):")
+    logger.info("Max number of ballots audited/day (e.max_audit_rate_p):")
     for pbcid in sorted(e.pbcids):
-        utils.myprint("    {}:{}".format(pbcid, e.max_audit_rate_p[pbcid]))
+        logger.info("    {}:{}".format(pbcid, e.max_audit_rate_p[pbcid]))
 
-    utils.myprint("Max allowed start time for any stage (e.max_stage_time):")
-    utils.myprint("    {}".format(e.max_stage_time))
+    logger.info("Max allowed start time for any stage (e.max_stage_time):")
+    logger.info("    {}".format(e.max_stage_time))
 
-    utils.myprint("Number of trials used to estimate risk"
+    logger.info("Number of trials used to estimate risk"
                   " in compute_contest_risk (e.n_trials):")
-    utils.myprint("    {}".format(e.n_trials))
+    logger.info("    {}".format(e.n_trials))
 
-    utils.myprint("Dirichlet hyperparameter for base case or non-matching reported/actual votes")
-    utils.myprint("(e.pseudocount_base):")
-    utils.myprint("    {}".format(e.pseudocount_base))
-    utils.myprint("Dirichlet hyperparameter for matching reported/actual votes")
-    utils.myprint("(e.pseudocount_match):")
-    utils.myprint("    {}".format(e.pseudocount_match))
+    logger.info("Dirichlet hyperparameter for base case or non-matching reported/actual votes")
+    logger.info("(e.pseudocount_base):")
+    logger.info("    {}".format(e.pseudocount_base))
+    logger.info("Dirichlet hyperparameter for matching reported/actual votes")
+    logger.info("(e.pseudocount_match):")
+    logger.info("    {}".format(e.pseudocount_match))
 
 
 def initialize_audit(e):
@@ -364,11 +369,11 @@ def initialize_audit(e):
 
 def show_audit_stage_header(e):
 
-    utils.myprint("audit stage time", e.stage_time)
-    utils.myprint("    New target sample sizes by paper ballot collection:")
+    logger.info("audit stage time", e.stage_time)
+    logger.info("    New target sample sizes by paper ballot collection:")
     for pbcid in e.pbcids:
         last_s = e.saved_state["sn_tp"][e.saved_state["stage_time"]]
-        utils.myprint("      {}: {} (+{})"
+        logger.info("      {}: {} (+{})"
                 .format(pbcid,
                         e.saved_state["plan_tp"][e.saved_state["stage_time"]][pbcid],
                         e.saved_state["plan_tp"][e.saved_state["stage_time"]][pbcid] - \
@@ -526,7 +531,7 @@ def audit(e, args):
     saved_state.write_initial_saved_state(e)
     show_audit_spec(e)
 
-    utils.myprint("====== Audit ======")
+    logger.info("====== Audit ======")
 
     while True:
         stage_time = utils.datetime_string()
@@ -537,7 +542,7 @@ def audit(e, args):
             break
         planner.compute_plan(e)
 
-        print("Slack:", risk_bayes.compute_slack_p(e))
+        logger.info("Slack:", risk_bayes.compute_slack_p(e))
         mid = e.mids[0]
         risk_bayes.tweak_all(e, mid)
 
@@ -550,29 +555,29 @@ def audit(e, args):
 
 def show_audit_summary(e):
 
-    utils.myprint("=============")
-    utils.myprint("Audit completed!")
+    logger.info("=============")
+    logger.info("Audit completed!")
 
-    utils.myprint("All measurements have a status in the following list:",
+    logger.info("All measurements have a status in the following list:",
             e.election_status_t[e.stage_time])
     if all([e.sampling_mode_m[mid]!="Active" \
             or e.status_tm[e.stage_time][mid]!="Open" \
             for mid in e.mids]):
-        utils.myprint("No `Active' measurement still has `Open' status.")
+        logger.info("No `Active' measurement still has `Open' status.")
     if ("Active", "Upset") in \
        [(e.sampling_mode_m[mid], e.status_tm[e.stage_time][mid])
         for mid in e.mids]:
-        utils.myprint(("At least one `Active' measurement signals"
+        logger.info(("At least one `Active' measurement signals"
                        " `Upset' (full recount needed)."))
     if e.stage_time > e.max_stage_time:
-        utils.myprint("Maximum audit stage time ({}) reached."
+        logger.info("Maximum audit stage time ({}) reached."
                 .format(e.max_stage_time))
 
-    utils.myprint("Number of ballots sampled, by paper ballot collection:")
+    logger.info("Number of ballots sampled, by paper ballot collection:")
     for pbcid in e.pbcids:
-        utils.myprint("  {}:{}".format(pbcid, e.sn_tp[e.stage_time][pbcid]))
-    utils.myprint_switches = ["std"]
-    utils.myprint("Total number of ballots sampled: ", end='')
-    utils.myprint(sum([e.sn_tp[e.stage_time][pbcid] for pbcid in e.pbcids]))
+        logger.info("  {}:{}".format(pbcid, e.sn_tp[e.stage_time][pbcid]))
+    logger.info_switches = ["std"]
+    logger.info("Total number of ballots sampled: ", end='')
+    logger.info(sum([e.sn_tp[e.stage_time][pbcid] for pbcid in e.pbcids]))
 
 

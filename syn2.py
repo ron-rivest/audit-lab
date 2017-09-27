@@ -10,6 +10,7 @@ In support of multi.py audit support program.
 """
 
 import copy
+import logging
 import numpy as np
 import os
 
@@ -18,6 +19,9 @@ import csv_readers
 import audit_orders
 import utils
 import csv_writers
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def process_spec(e, synpar, L):
@@ -51,7 +55,7 @@ def process_spec(e, synpar, L):
     """
 
     for (cid, pbcid, rv, av, num) in L:
-        print("    ", cid, pbcid, rv, av, num)
+        logger.info("    ", cid, pbcid, rv, av, num)
 
         if cid not in e.cids:
             e.cids.append(cid)
@@ -175,8 +179,8 @@ def generate_syn_type_2(e, args):
     debug = False
     if debug:
         for key in sorted(vars(e)):
-            print(key)
-            print("    ", vars(e)[key])
+            logger.info(key)
+            logger.info("    ", vars(e)[key])
 
     csv_writers.write_csv(e)
 

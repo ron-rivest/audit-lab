@@ -16,9 +16,13 @@ primitive, are sketched in risk_bayes_2.py.)
 """
 
 import copy
+import logging
 
 import audit
 import outcomes
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 ##############################################################################
 # Gamma distribution
@@ -221,7 +225,7 @@ def tweak_all(e, mid):   # unused ??
     return   # because this routine is unused; a stub/wip
 
     risk = compute_risk(e, mid, e.sn_tcpra)
-    print("Risk (no change):", risk)
+    logger.info("Risk (no change):", risk)
     slack_p = compute_slack_p(e)
     cid = e.cid_m[mid]
     tweak = 0.1
@@ -248,7 +252,7 @@ def tweak_all(e, mid):   # unused ??
                             e.sn_tcpra[e.stage_time][cid][pbcid][rv][av] / \
                             sn_tcp[e.stage_time][cid][pbcid])
         risk = compute_risk_with_tweak(e, mid, slack_p, tweak)
-        print("Risk (change {}):".format(pbcid),
+        logger.info("Risk (change {}):".format(pbcid),
               risk)
                                                                                     
 

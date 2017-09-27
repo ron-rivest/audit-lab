@@ -11,23 +11,10 @@ and calls routines in syn2.py for elections "of type 2".
 """
 
 
-import argparse
-import copy
 import numpy as np
-import os
-import shutil
 
 import cli_syn
 import multi
-import audit_orders
-import election_spec
-import ids
-import outcomes
-import reported
-import syn1
-import syn2
-import utils
-import csv_writers
 
 class Syn_Params(object):
     """ An object we can hang synthesis generation parameters off of. """

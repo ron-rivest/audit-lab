@@ -7,8 +7,8 @@
 Routines to work with multi.py on post-election audits.
 """
 
-
 import os
+import warnings
 import time
 
 import multi
@@ -193,7 +193,10 @@ def read_audit_spec(e, args):
     read_audit_spec_collection(e, args)
     read_audit_spec_seed(e, args)
 
-    check_audit_spec(e)
+    with warnings.catch_warnings(record=True) as w:
+        check_audit_spec(e)
+        if len(w) > 0:
+            raise RuntimeError("Too many errors; terminating.")
 
 
 def read_audit_spec_global(e, args):
@@ -301,25 +304,20 @@ def read_audit_spec_seed(e, args):
 def check_audit_spec(e):
 
     if not isinstance(e.risk_limit_m, dict):
-        utils.myerror("e.risk_limit_m is not a dict.")
+        raise ValueError("e.risk_limit_m is not a dict.")
     for mid in e.risk_limit_m:
         if mid not in e.mids:
-            utils.mywarning("e.risk_limit_m mid key `{}` is not in e.mids."
-                      .format(mid))
+            warnings.warn("e.risk_limit_m mid key `{}` is not in e.mids.".format(mid))
         if not (0.0 <= float(e.risk_limit_m[mid]) <= 1.0):
-            utils.mywarning("e.risk_limit_m[{}] not in interval [0,1]".format(mid))
+            warnings.warn("e.risk_limit_m[{}] not in interval [0,1]".format(mid))
 
     if not isinstance(e.max_audit_rate_p, dict):
-        utils.myerror("e.max_audit_rate_p is not a dict.")
+        raise ValueError("e.max_audit_rate_p is not a dict.")
     for pbcid in e.max_audit_rate_p:
         if pbcid not in e.pbcids:
-            utils.mywarning("pbcid `{}` is a key for e.max_audit_rate_p but not in e.pbcids."
-                      .format(pbcid))
+            warnings.warn("pbcid `{}` is a key for e.max_audit_rate_p but not in e.pbcids.".format(pbcid))
         if not 0 <= int(e.max_audit_rate_p[pbcid]):
-            utils.mywarning("e.max_audit_rate_p[{}] must be nonnegative.".format(pbcid))
-
-    if utils.warnings_given > 0:
-        utils.myerror("Too many errors; terminating.")
+            warnings.warn("e.max_audit_rate_p[{}] must be nonnegative.".format(pbcid))
 
 
 def show_audit_spec(e):

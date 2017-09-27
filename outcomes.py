@@ -72,9 +72,9 @@ def compute_outcome(e, cid, tally):
         return plurality(e, cid, tally)
     else:
         # TBD: IRV, etc...
-        multi.myerror(("Non-plurality outcome rule {} for contest {}"
-                       "not yet implemented!")
-                      .format(e.contest_type_c[cid], cid))
+        raise NotImplementedError(("Non-plurality outcome rule {} for contest {}"
+                                   "not yet implemented!")
+                                   .format(e.contest_type_c[cid], cid))
 
 
 def compute_tally2(vec):

@@ -10,7 +10,7 @@ Command-line parser and dispatch for multi.py
 
 import argparse
 
-
+import audit_orders
 import multi
 import election_spec
 import ids

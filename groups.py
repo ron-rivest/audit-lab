@@ -8,8 +8,7 @@ This module implements "contest groups" for the post-election audit program
 "multi.py".  
 """
 
-import multi
-import utils
+import warnings
 
 
 def expand_contest_group_defs(e):
@@ -62,7 +61,7 @@ def reachable_from(e, gid, gids, cids, stack):
 
     if gid in gids:
         if gid in stack:
-            utils.mywarning("Group id {} is in a cycle!".format(gid))
+            warnings.warn("Group id {} is in a cycle!".format(gid))
         return
     gids.add(gid)
     for cgid in e.cgids_g[gid]:

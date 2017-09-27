@@ -57,6 +57,7 @@ from multi.py
 """
 
 import os
+import warnings
 
 import multi
 import csv_readers
@@ -83,9 +84,8 @@ def read_election_spec_general(e, election_dirname):
         elif "Election dirname" == row["Attribute"]:
             new_election_dirname = row["Value"]
             if new_election_dirname != election_dirname:
-                utils.mywarning(("Inconsistent election_dirname {}"
-                                 "ignored in file {}.")
-                                 .format(new_election_dirname, file_pathname))
+                warnings.warn("Inconsistent election_dirname {} ignored in file {}."
+                              .format(new_election_dirname, file_pathname))
             else:
                 pass # everything OK
         elif "Election date" == row["Attribute"]:
@@ -95,13 +95,11 @@ def read_election_spec_general(e, election_dirname):
     for attribute in ["election_name", "election_dirname",
                       "election_date", "election_url"]:
         if attribute not in vars(e):
-            utils.mywarning("Attribute {} not present in 11-general.csv."
-                            .format(attribute))
-    if utils.warnings_given > 0:
-        utils.myerror("Too many errors; terminating.")
+            warnings.warn("Attribute {} not present in 11-general.csv."
+                          .format(attribute))
 
 
-def test_read_election_spec_general(e):        
+def test_read_election_spec_general(e):
 
     # print("test_read_election_spec_general")
     read_election_spec_general(e, "ex1")
@@ -157,8 +155,7 @@ def read_election_spec_contest_groups(e):
     for row in rows:
         gid = row["Contest group"]
         if gid in e.cids:
-            utils.myerror("Contest group id {} must not also be a contest id."
-                          .format(gid))
+            raise ValueError("Contest group id {} must not also be a contest id.".format(gid))
         e.gids.append(gid)
         e.cgids_g[gid] = row["Contest(s) or group(s)"]
 
@@ -198,13 +195,18 @@ def test_read_election_spec_collections(e):
 
 
 def read_election_spec(e):
-
-    read_election_spec_general(e, e.election_dirname)
+    with warnings.catch_warnings(record=True) as w:
+        read_election_spec_general(e, e.election_dirname)
+        if len(w) > 0:
+            raise RuntimeError("Too many errors; terminating.")
     read_election_spec_contests(e)
     read_election_spec_contest_groups(e)
     read_election_spec_collections(e)
     finish_election_spec(e)
-    check_election_spec(e)
+    with warnings.catch_warnings(record=True) as w:
+        check_election_spec(e)
+        if len(w) > 0:
+            raise RuntimeError("election_spec.check_election_spec: Too many errors or warnings; terminating.")
     show_election_spec(e)
 
 
@@ -256,54 +258,49 @@ def finish_election_spec_votes(e):
 def check_id(id, check_for_whitespace=False):
 
     if not isinstance(id, str) or not id.isprintable():
-        utils.mywarning("id is not string or is not printable: {}".format(id))
+        warnings.warn("id is not string or is not printable: {}".format(id))
     if check_for_whitespace:
         for c in id:
             if c.isspace():
-                utils.mywarning("id `id` contains whitespace.")
+                warnings.warn("id `id` contains whitespace.")
                 break
 
 
 def check_election_spec(e):
 
     if not isinstance(e.cids, (list, tuple, set)):
-        utils.myerror("e.cids is not a set.")
+        raise ValueError("e.cids is not a set.")
     if len(e.cids) == 0:
-        utils.myerror("e.cids is an empty list of contests.")
+        raise ValueError("e.cids is an empty list of contests.")
     for cid in e.cids:
         check_id(cid)
 
     if not isinstance(e.pbcids, (list, tuple)):
-        utils.myerror("e.pbcids is not a list or a tuple.")
+        raise ValueError("e.pbcids is not a list or a tuple.")
     if len(e.pbcids) == 0:
-        utils.myerror("e.pbcids is an empty list of pbcids.")
+        raise ValueError("e.pbcids is an empty list of pbcids.")
     for pbcid in e.pbcids:
         check_id(pbcid)
 
     for cid in e.selids_c:
         if cid not in e.cids:
-            utils.myerror("e.selids_c has a key `{}` not in e.cids.".format(cid))
+            raise ValueError("e.selids_c has a key `{}` not in e.cids.".format(cid))
         for selid in e.selids_c[cid]:
             check_id(selid)
     for cid in e.cids:
         if cid not in e.selids_c:
-            utils.mywarning("cid `{}` should be key in e.selids_c".format(cid))
+            warnings.warn("cid `{}` should be key in e.selids_c".format(cid))
 
     if not isinstance(e.cvr_type_p, dict):
-        utils.myerror("e_cvr_type is not a dict.")
+        raise ValueError("e_cvr_type is not a dict.")
     for pbcid in e.cvr_type_p:
         if pbcid not in e.pbcids:
-            utils.mywarning("pbcid `{}` is not in e.pbcids".format(pbcid))
+            warnings.warn("pbcid `{}` is not in e.pbcids".format(pbcid))
         if e.cvr_type_p[pbcid] not in ["CVR", "noCVR"]:
-            utils.mywarning("e.cvr_type_p[{}]==`{}` is not CVR or noCVR"
-                      .format(pbcid, e.cvr_type_p[pbcid]))
+            warnings.warn("e.cvr_type_p[{}]==`{}` is not CVR or noCVR".format(pbcid, e.cvr_type_p[pbcid]))
     for pbcid in e.pbcids:
         if pbcid not in e.cvr_type_p:
-            utils.mywarning("pbcid `{}` not key in e.cvr_type_p."
-                      .format(pbcid))
-
-    if utils.warnings_given > 0:
-        utils.myerror("election_spec.check_election_spec: Too many errors or warnings; terminating.")
+            warnings.warn("pbcid `{}` not key in e.cvr_type_p.".format(pbcid))
 
 
 def show_election_spec(e):

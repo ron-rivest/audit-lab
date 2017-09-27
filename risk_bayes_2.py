@@ -131,11 +131,4 @@ The R values are large, should sum to values seen in the
 ballot manifest.
 
 T.getR((),av) gives the reported vote total for candidate av.
-
-
-
-
-
-
-
-
+"""

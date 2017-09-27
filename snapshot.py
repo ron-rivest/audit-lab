@@ -74,7 +74,7 @@ def hash_speed():
         h = hashlib.sha256()
         for _ in range(2**(k-20)):
             h.update(s)
-        hash_value = h.hexdigest()
+        # hash_value = h.hexdigest()
         t1 = time.time()
         print("    Estimated speed {:0.2f} Gbytes/sec".format((2**(k-30))/(t1-t0)))
 

@@ -16,8 +16,6 @@ import os
 import multi
 import csv_readers
 import audit_orders
-import syn
-import syn1
 import utils
 import csv_writers
 

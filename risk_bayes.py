@@ -16,9 +16,7 @@ primitive, are sketched in risk_bayes_2.py.)
 """
 
 import copy
-import numpy as np
 
-import multi
 import audit
 import outcomes
 
@@ -226,6 +224,7 @@ def tweak_all(e, mid):   # unused ??
     print("Risk (no change):", risk)
     slack_p = compute_slack_p(e)
     cid = e.cid_m[mid]
+    tweak = 0.1
 
     # Compute sn_tcp, as it is not otherwise defined.
     # (Perhaps this should be computed elsewhere/earlier?)
@@ -243,10 +242,10 @@ def tweak_all(e, mid):   # unused ??
         for rv in e.sn_tcpra[e.stage_time][cid][pbcid]:
             for av in e.sn_tcpra[e.stage_time][cid][pbcid][rv]:
                 if sn_tcp[e.stage_time][cid][pbcid] > 0:
-                    sn_tcpra[e.stage_time][cid][pbcid][rv][av] += \
+                    e.sn_tcpra[e.stage_time][cid][pbcid][rv][av] += \
                         min(100,                                                               
                             slack_p[pbcid] *\
-                            sn_tcpra[e.stage_time][cid][pbcid][rv][av] / \
+                            e.sn_tcpra[e.stage_time][cid][pbcid][rv][av] / \
                             sn_tcp[e.stage_time][cid][pbcid])
         risk = compute_risk_with_tweak(e, mid, slack_p, tweak)
         print("Risk (change {}):".format(pbcid),

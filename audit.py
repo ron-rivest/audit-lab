@@ -108,10 +108,10 @@ def show_sample_counts(e):
         for pbcid in sorted(e.possible_pbcid_c[cid]):
             tally2 = e.sn_tcpra[e.stage_time][cid][pbcid]
             for r in sorted(tally2.keys()):  # r = reported vote
-                logger.info("      {}.{}[{}]".format(cid, pbcid, r), end='')
-                for a in sorted(tally2[r].keys()):
-                    logger.info("  {}:{}".format(a, tally2[r][a]), end='')
-                logger.info("  total:{}".format(e.sn_tcpr[e.stage_time][cid][pbcid][r]))
+                tally_str = ' '.join(["{}:{}".format(a, tally2[r][a])
+                                      for a in sorted(tally2[r].keys())])
+                logger.info("      {}.{}[{}] {} {}".format(cid, pbcid, r, tally_str, 
+                                                           e.sn_tcpr[e.stage_time][cid][pbcid][r]))
 
 
 ##############################################################################
@@ -152,7 +152,7 @@ def show_risks_and_statuses(e):
     logger.info(("    Risk (that reported outcome is wrong)"
                    "and measurement status per mid:"))
     for mid in e.mids:
-        logger.info("     ",
+        logger.info("     %s %s %s %s %s %s %s",
                       mid,
                       e.cid_m[mid],
                       e.risk_method_m[mid],
@@ -161,7 +161,7 @@ def show_risks_and_statuses(e):
                       "(limits {},{})".format(e.risk_limit_m[mid],
                                               e.risk_upset_m[mid]),
                       e.status_tm[e.stage_time][mid])
-    logger.info("    Election status:", e.election_status_t[e.stage_time])
+    logger.info("    Election status: %s", e.election_status_t[e.stage_time])
 
 
 ##############################################################################
@@ -248,7 +248,7 @@ def read_audit_spec_contest(e, args):
                   "Param 1",
                   "Param 2"]          
     rows = csv_readers.read_csv_file(file_pathname, fieldnames, varlen=False)
-    logger.info("read_audit_spec_contest: e.mid:", e.mids)
+    logger.info("read_audit_spec_contest: e.mid: %s", e.mids)
     for row in rows:
         mid = row["Measurement id"]
         e.mids.append(mid)
@@ -369,7 +369,7 @@ def initialize_audit(e):
 
 def show_audit_stage_header(e):
 
-    logger.info("audit stage time", e.stage_time)
+    logger.info("audit stage time %s", e.stage_time)
     logger.info("    New target sample sizes by paper ballot collection:")
     for pbcid in e.pbcids:
         last_s = e.saved_state["sn_tp"][e.saved_state["stage_time"]]
@@ -542,7 +542,7 @@ def audit(e, args):
             break
         planner.compute_plan(e)
 
-        logger.info("Slack:", risk_bayes.compute_slack_p(e))
+        logger.info("Slack: %s", risk_bayes.compute_slack_p(e))
         mid = e.mids[0]
         risk_bayes.tweak_all(e, mid)
 
@@ -558,8 +558,8 @@ def show_audit_summary(e):
     logger.info("=============")
     logger.info("Audit completed!")
 
-    logger.info("All measurements have a status in the following list:",
-            e.election_status_t[e.stage_time])
+    logger.info("All measurements have a status in the following list: %s",
+                e.election_status_t[e.stage_time])
     if all([e.sampling_mode_m[mid]!="Active" \
             or e.status_tm[e.stage_time][mid]!="Open" \
             for mid in e.mids]):
@@ -571,13 +571,13 @@ def show_audit_summary(e):
                        " `Upset' (full recount needed)."))
     if e.stage_time > e.max_stage_time:
         logger.info("Maximum audit stage time ({}) reached."
-                .format(e.max_stage_time))
+                    .format(e.max_stage_time))
 
     logger.info("Number of ballots sampled, by paper ballot collection:")
     for pbcid in e.pbcids:
         logger.info("  {}:{}".format(pbcid, e.sn_tp[e.stage_time][pbcid]))
     logger.info_switches = ["std"]
-    logger.info("Total number of ballots sampled: ", end='')
-    logger.info(sum([e.sn_tp[e.stage_time][pbcid] for pbcid in e.pbcids]))
+    logger.info("Total number of ballots sampled: %s",
+                sum([e.sn_tp[e.stage_time][pbcid] for pbcid in e.pbcids]))
 
 

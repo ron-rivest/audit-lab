@@ -55,7 +55,7 @@ def process_spec(e, synpar, L):
     """
 
     for (cid, pbcid, rv, av, num) in L:
-        logger.info("    ", cid, pbcid, rv, av, num)
+        logger.info("    %s %s %s %s %s", cid, pbcid, rv, av, num)
 
         if cid not in e.cids:
             e.cids.append(cid)

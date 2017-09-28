@@ -326,27 +326,22 @@ def show_election_spec(e):
                       .format(cid, e.contest_type_c[cid], e.params_c[cid], e.write_ins_c[cid]))
     logger.info("Valid selection ids for each cid (e.selids_c):")
     for cid in e.cids:
-        logger.info("    {}: ".format(cid), end='')
-        logger.info(", ".join(sorted(e.selids_c[cid])))
+        logger.info("    {}: {}".format(cid, ", ".join(sorted(e.selids_c[cid]))))
     logger.info("Number of paper ballot collections:")
     logger.info("    {}".format(len(e.pbcids)))
     logger.info("Paper ballot collection ids (e.pbcids), CVR types (e.cvr_type_p), and managers (e.manager_p):")
     for pbcid in sorted(e.pbcids):
         logger.info("    {} ({}, Manager:{})"
-                      .format(pbcid, e.cvr_type_p[pbcid], e.manager_p[pbcid]))
+                    .format(pbcid, e.cvr_type_p[pbcid], e.manager_p[pbcid]))
     logger.info("Required pbcids for each cid (e.required_pbcid_c):")
     for cid in e.cids:
-        logger.info("    {}: ".format(cid), end='')
-        logger.info(", ".join(sorted(e.required_pbcid_c[cid])))
+        logger.info("    {}: {}".format(cid, ", ".join(sorted(e.required_pbcid_c[cid]))))
     logger.info("Possible pbcids for each cid (e.possible_pbcid_c):")
     for cid in e.cids:
-        logger.info("    {}: ".format(cid), end='')
-        logger.info(", ".join(sorted(e.possible_pbcid_c[cid])))
-
+        logger.info("    {}: {}".format(cid, ", ".join(sorted(e.possible_pbcid_c[cid]))))
 
 
 def test():
-    
     e = multi.Election()
     test_read_election_spec_general(e)
     test_read_election_spec_contests(e)

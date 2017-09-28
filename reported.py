@@ -407,11 +407,9 @@ def show_reported(e):
     logger.info("Total reported votes for each vote by cid and pbcid (e.rn_cpr):")
     for cid in e.cids:
         for pbcid in sorted(e.possible_pbcid_c[cid]):
-            logger.info("    {}.{}: ".format(cid, pbcid), end='')
-            for vote in sorted(e.rn_cpr[cid][pbcid]):
-                logger.info("{}:{} ".format(
-                    vote, e.rn_cpr[cid][pbcid][vote]), end='')
-            logger.info()
+            vote_str = ' '.join(["{}:{}".format(vote, e.rn_cpr[cid][pbcid][vote])
+                                 for vote in sorted(e.rn_cpr[cid][pbcid])])
+            logger.info("    {}.{}: {}".format(cid, pbcid, vote_str))
 
     logger.info("Total votes cast for each cid (e.rn_c):")
     for cid in e.cids:
@@ -419,10 +417,9 @@ def show_reported(e):
 
     logger.info("Total cast for each vote for each cid (e.rn_cr):")
     for cid in e.cids:
-        logger.info("    {}: ".format(cid), end='')
-        for vote in sorted(e.rn_cr[cid]):
-            logger.info("{}:{} ".format(vote, e.rn_cr[cid][vote]), end='')
-        logger.info()
+        vote_str = ' '.join(["{}:{}".format(vote, e.rn_cr[cid][vote])
+                             for vote in sorted(e.rn_cr[cid])])
+        logger.info("    {}: {}".format(cid, vote_str))
 
     logger.info("Reported outcome for each cid (e.ro_c):")
     for cid in e.cids:

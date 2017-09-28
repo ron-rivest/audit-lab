@@ -74,5 +74,5 @@ def dispatch(e, args):
     else:
         logger.info("Illegal syn_type:", args.syn_type)
 
-    logger.info("  Done. Synthetic election written to:", dirpath)
+    logger.info("  Done. Synthetic election written to: %s", dirpath)
 

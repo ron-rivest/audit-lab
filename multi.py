@@ -25,8 +25,13 @@ it could also be run locally in a county.
 
 # MIT License
 
+import logging
+
 import cli_multi
 import utils
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 ##############################################################################
 # Elections
@@ -482,20 +487,17 @@ class Election(object):
 
 
 def main():
-
-    utils.myprint_switches = ["std"]   # [] to suppress printing
-
-    print("multi.py -- Bayesian audit support program.")
+    logger.info("multi.py -- Bayesian audit support program.")
 
     utils.start_datetime_string = utils.datetime_string()
-    print("Starting date-time:", utils.start_datetime_string)
+    logger.info("Starting date-time:", utils.start_datetime_string)
 
     args = cli_multi.parse_args()
     e = Election()
     try:
         cli_multi.dispatch(e, args)
     finally:
-        utils.close_myprint_files()
+        pass
 
 
 if __name__ == "__main__":

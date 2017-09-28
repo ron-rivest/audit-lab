@@ -18,11 +18,15 @@ the program:
 """
 
 import hashlib
+import logging
 import os
 
 import multi
 import ids
 import utils
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def sha256(hash_input):
@@ -51,7 +55,7 @@ def test_shuffle(seed=1234567890):
 
     for i in range(3):
         L = range(20)
-        print(shuffle(L, seed+i))
+        logger.info(shuffle(L, seed+i))
     """
     [12, 13, 2, 18, 3, 8, 9, 7, 17, 6, 16, 5, 11, 19, 1, 14, 10, 0, 4, 15]
     [4, 2, 9, 8, 14, 6, 3, 5, 7, 15, 18, 10, 19, 1, 13, 11, 17, 12, 0, 16]

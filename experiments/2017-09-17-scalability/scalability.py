@@ -1,9 +1,13 @@
 # test_scalability.py
 # Ronald L. Rivest with Huasyn Karimi
 
+import logging
 import syn2
 import time
 import structure
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def tester(se):
 
@@ -23,11 +27,11 @@ def tester(se):
 
     
     for key in sorted(vars(se)):
-        print(key)
-        print("    ", vars(se)[key])
+        logger.info(key)
+        logger.info("    ", vars(se)[key])
     
 
-    print("Checking structure:", structure.check_election_structure(se))
+    logger.info("Checking structure:", structure.check_election_structure(se))
     
     syn2.write_structure_csvs(se)
     syn2.write_reported(se)
@@ -60,7 +64,7 @@ def scale_test(k):
     # stop timer; print k and elapsed time
     end = time.time() 
 
-    print("For k=", k, ",", end-start, "seconds elapsed.")
+    logger.info("For k=", k, ",", end-start, "seconds elapsed.")
 
 
 for k in range(3, 8):

@@ -1,6 +1,7 @@
 # cli_syn.py: Command-line arguments for syn.py
 
 import argparse
+import logging
 import os
 import shutil
 import warnings
@@ -9,6 +10,10 @@ import ids
 import multi
 import syn1
 import syn2
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 def parse_args():
 
@@ -67,7 +72,7 @@ def dispatch(e, args):
     elif args.syn_type == '2':
         syn2.generate_syn_type_2(e, args)
     else:
-        print("Illegal syn_type:", args.syn_type)
+        logger.info("Illegal syn_type:", args.syn_type)
 
-    print("  Done. Synthetic election written to:", dirpath)
+    logger.info("  Done. Synthetic election written to: %s", dirpath)
 

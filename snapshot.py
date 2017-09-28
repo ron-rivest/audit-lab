@@ -16,6 +16,7 @@ files may exist that aren't checked).
 
 
 import hashlib
+import logging
 import os
 import time
 
@@ -67,7 +68,7 @@ def hash_speed():
         About 0.4 Gb/sec on a macbook pro.
     """
 
-    print("Measuring SHA256 hash speed on 256MB of data...")
+    logger.info("Measuring SHA256 hash speed on 256MB of data...")
     s = b" "*(2**20)              # 1MB
     for k in [28]:
         t0 = time.time()
@@ -76,7 +77,7 @@ def hash_speed():
             h.update(s)
         # hash_value = h.hexdigest()
         t1 = time.time()
-        print("    Estimated speed {:0.2f} Gbytes/sec".format((2**(k-30))/(t1-t0)))
+        logger.info("    Estimated speed {:0.2f} Gbytes/sec".format((2**(k-30))/(t1-t0)))
 
 
 def write_hash_dir(topdirname, output_filename):
@@ -98,11 +99,11 @@ def write_hash_dir(topdirname, output_filename):
 if __name__=="__main__":
 
     dir_hash = compute_dir_hash(".")
-    print("Does snapshot work on current directory:",
+    logger.info("Does snapshot work on current directory:",
           verify_dir_hash(".", dir_hash))
 
     hash_speed()
 
     hash_filename = "test_data/20-audit-snapshot.csv"
     write_hash_dir(".", hash_filename)
-    print("hash file {} written.".format(hash_filename))
+    logger.info("hash file {} written.".format(hash_filename))

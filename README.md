@@ -377,34 +377,35 @@ Identifiers are more-or-less arbitrary strings of characters.
 
 We have several types of identifiers:
 
-* **Contest Identifiers** (example: ``**"DenverMayor"**``)
+* **Contest Identifiers** (example: **``DenverMayor``**)
   A contest identifier may contain blanks or punctuation.
   A contest identifier is called a ``"cid"`` in the code.
 
-* **Selection Identifiers** (examples: ``**"Yes"**`` or ``**"JohnSmith"**``)
+* **Selection Identifiers** (examples: **``Yes``** or **``JohnSmith``**)
   A selection identifier is called a ``"selid"`` in the code.
   **Roughly speaking, there should be one selection identifier for each
   optical scan bubble**.
 
   If bubble are arranged in a matrix, for
   preferential voting, then each selid should have the form
-  ``**"rank-candidate"**``, as in ``**"1-Jones"**`` or ``**"2-Smith"**`` (for the
+  **``rank-candidate``**, as in **``1-Jones``** or **``2-Smith``** (for the
   first and second candidates preferred by the voter).
 
   For score voting or 3-2-1 voting, the selid should have the
-  form ``**"score-candidate"**``, as in ``**"17-Smith"**`` or ``**"Excellent-Jones"**``.
+  form **``score-candidate``**, as in **``17-Smith``**
+  or **``Excellent-Jones``**.
 
   In other cases of bubbles arranged in a matrix, the
-  selid should have the form ``**"rowid-columnid"**``.
+  selid should have the form **``rowid-columnid``**.
 
   A **write-in** selection has a selection id beginning with a plus
-  sign (example: ``**"+BobWhite"**``).
+  sign (example: **``+BobWhite``**).
 
   Other potentially useful selection ids include the following.  Selection
   ids beginning with a minus sign are used to signal special conditions,
   and may not win a contest.  
 
-    1. **``"-Unknown"``**: Nothing is known about the ballot. It might
+    1. **``-Unknown``**: Nothing is known about the ballot. It might
        not even contain the desired contest.
     2. **``-NoSuchContest``**: The contest is missing from the ballot. Perhaps
        the wrong ballot was pulled, or the contest doesn't appear on every
@@ -416,11 +417,11 @@ We have several types of identifiers:
     5. **``-NoBallot``**: The ballot doesn't exist.  Perhaps it only exists
        in electronic form.  (Suggested by Neal McBurnett, as NoVVPR)
 
-* **Paper Ballot Collection Identifiers** (example: ``**"BoulderPBC25"**``)
+* **Paper Ballot Collection Identifiers** (example: **``BoulderPBC25``**)
   A paper ballot collection identifier is called a ``"pbcid"`` in the code.
 
 * A **Ballot Identifier** is a unique identifier assigned to a particular
-  paper ballot (example: ``**"25-72"**``).
+  paper ballot (example: **``25-72``**).
   A ballot id is called a ``"bid"`` in the code.
 
   Ballots within a collection must have unique bids, but it is not

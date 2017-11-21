@@ -170,7 +170,7 @@ during the audit.
 Some elections have so many contests that the ballot is comprised of
 two or more separate "cards".  
 We treat this situation in the same manner as having a collection
-consisting of two or more ``ballot styles.''
+consisting of two or more "ballot styles."
 
 [Back to TOC](#table-of-contents)
 
@@ -185,7 +185,7 @@ all cast paper ballots.
 ``Multi.py`` supports "Bayesian" audits, a form of post-election auditing
 proposed by 
 [Rivest and Shen (2012)](http://people.csail.mit.edu/rivest/pubs.html#RS12z).
-It also supports ``frequentist`` risk-limiting audits, as explained by
+It also supports "frequentist" risk-limiting audits, as explained by
 [Lindeman and Stark (2012)](https://www.stat.berkeley.edu/~stark/Preprints/gentle12.pdf).
 (Or will; this code isn't written yet.)
 Our emphasis and strongest interest is in Bayesian audits, but the
@@ -193,7 +193,9 @@ Our emphasis and strongest interest is in Bayesian audits, but the
 be used simultaneously.
 
 A Bayesian audit provides an answer to the question 
-"``What is the probability that the reported election outcome is wrong?``"
+
+    "``What is the probability that the reported election outcome is wrong?``"
+
 We call this probability the **Bayesian risk** perceived for the reported
 outcome, given the audit data.
 
@@ -210,7 +212,7 @@ See Rivest (''Bayesian audits: Explained and Extended'', draft
 available from author) for an expanded discussion of Bayesian audits.
 
 Bayesian risk-limiting audits are subtly different than the
-``frequentist'' risk-limiting audits promulgated by Lindeman and Stark
+"frequentist" risk-limiting audits promulgated by Lindeman and Stark
 [Lindeman and Stark (2012)](https://www.stat.berkeley.edu/~stark/Preprints/gentle12.pdf).
 Details omitted here, but Bayesian audits provide additional
 capabilities and flexibility, at the cost of some additional (but
@@ -505,7 +507,8 @@ new data is added to the end, but previous data is never changed.
 ###  Directory structure
 
 The information for an election is kept in a single directory
-structure in the public Audit Central election server, as documented here.
+structure in the public Audit Central election server, as documented
+here.
 
 Information for a different election would be kept in a separate
 similar (but disjoint) directory structure.

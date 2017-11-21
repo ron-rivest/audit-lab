@@ -194,7 +194,7 @@ be used simultaneously.
 
 A Bayesian audit provides an answer to the question:
 
-    *What is the probability that the reported election outcome is wrong?*
+> What is the probability that the reported election outcome is wrong?
 
 We call this probability the **Bayesian risk** perceived for the reported
 outcome, given the audit data.

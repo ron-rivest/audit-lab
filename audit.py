@@ -152,7 +152,7 @@ def show_risks_and_statuses(e):
     logger.info(("    Risk (that reported outcome is wrong)"
                    "and measurement status per mid:"))
     for mid in e.mids:
-        logger.info("     %s %s %s %s %s %s %s",
+        logger.info("      %s %s %s %s %s %s %s",
                       mid,
                       e.cid_m[mid],
                       e.risk_method_m[mid],

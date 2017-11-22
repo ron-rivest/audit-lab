@@ -27,11 +27,13 @@ it could also be run locally in a county.
 
 import logging
 
+# Following should be done before other imports, as they will otherwise
+# initialize logging module with the default format string, which is not wanted.
+logging.basicConfig(level=logging.INFO,format="%(message)s")
+logger = logging.getLogger(__name__)
+
 import cli_multi
 import utils
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 ##############################################################################
 # Elections

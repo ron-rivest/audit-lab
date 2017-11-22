@@ -20,9 +20,9 @@ import audit_orders
 import utils
 import csv_writers
 
+# logging.basicConfig(level=logging.INFO)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 def process_spec(e, synpar, L):
     """

@@ -492,7 +492,7 @@ def main():
     logger.info("multi.py -- Bayesian audit support program.")
 
     utils.start_datetime_string = utils.datetime_string()
-    logger.info("Starting date-time:", utils.start_datetime_string)
+    logger.info("Starting date-time: %s", utils.start_datetime_string)
 
     args = cli_multi.parse_args()
     e = Election()

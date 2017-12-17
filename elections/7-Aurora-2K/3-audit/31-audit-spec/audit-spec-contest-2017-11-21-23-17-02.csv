@@ -1,0 +1,2 @@
+Measurement id,Contest,Risk Measurement Method,Risk Limit,Risk Upset Threshold,Sampling Mode,Initial Status,Param 1,Param 2
+M1-Aurora2K,Aurora2K,Bayes,0.05,0.98,Active,Open,,

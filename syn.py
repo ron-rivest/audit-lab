@@ -32,14 +32,18 @@ def geospace(start, stop, num=7):
 
     A bit like numpy.linspace, but geometrically spread
     out rather than linearly spread out, and only integers returned.
+    >>> geospace(1, 64)
+    [1, 2, 4, 8, 16, 32, 64]
     >>> geospace(0,1)
     [0, 1]
     >>> geospace(0,10)
-    [0, 1, 2, 3, 5, 7, 10]    
+    [0, 1, 2, 3, 5, 7, 10]
     >>> geospace(20, 10000)
-    [20, 56, 159, 447, 1260, 3550, 10000]    
-    >>> geospace(1, 64)
-    [1, 2, 4, 8, 16, 32, 64]
+    [20, 56, 159, 447, 1260, 3550, 10000]
+
+    Twelve-tone equal temperament scale
+    >>> geospace(1000, 2000, num=13)
+    [1000, 1059, 1122, 1189, 1260, 1335, 1414, 1498, 1587, 1682, 1782, 1888, 2000]
 
     This should presumably be replaced by numpy.logspace !
     (although duplicates need to be removed...)

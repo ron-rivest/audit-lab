@@ -24,7 +24,7 @@ the post-election auditing of elections with multiple contests and
 multiple separately-managed collections of paper ballots.
 
 The software is designed to be helpful for auditing elections such as
-the November 2017 Colorado election, which has hundreds of contests
+the November 2017 Colorado election, which had hundreds of contests
 spread across 64 counties.
 
 **This README file is a *design document*, not a description of what

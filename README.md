@@ -1191,10 +1191,12 @@ Each row specifies a risk measurement specific to a particular contest.
 The measured risk quantifies, on a scale from 0.0 (no risk) to 1.0
 (extreme risk), the risk associated with stopping the audit now and
 accepting the reported election outcome as correct.
+As explained below, a variety of measurements, using different
+algorithms and parameters, can be made for a given contest.
 
 Audit Central determines when each risk measurement is performed.
 
-The measured risk is compared against a specified **risk limi** (such as 0.05);
+The measured risk is compared against a specified **risk limit** (such as 0.05);
 if the measured risk is less than the specified risk limit, we say
 the test **passes**.
 

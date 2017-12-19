@@ -71,6 +71,7 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
     """ 
     Compute (estimate) Bayesian risk (chance that reported 
     outcome is wrong for contest e.cid_m[mid]).
+    sn_tcpra is sampled number: stage_time->cid->pbcid->rvote->avote->count
     We take sn_tcpra here as argument rather than just use e.sn_tcpra so
     we can call compute_contest_risk with modified sample counts.
     (This option not yet used, but might be later, when optimizing
@@ -124,7 +125,7 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
 
 def compute_risks(e, st, trials=None):
     """
-    Compute risks for all measurements, for current sample.
+    Compute risks via all measurement approaches, for current sample.
     """
 
     for mid in e.mids:

@@ -403,14 +403,13 @@ class Election(object):
 
         # *** Fixed audit parameters
 
-        e.pseudocount_base = 0.5
+        e.pseudocount_base = 50.0
         # Fixed parameter
-
         # base-level pseudocount (hyperparameter)
         # to use for Bayesian priors
         # (0.5 for Jeffrey's distribution)
 
-        e.pseudocount_match = 50.0
+        e.pseudocount_match = 0.5
         # Fixed parameter
         # hyperparameter for prior distribution to use
         # for components where reported_vote==actual_vote

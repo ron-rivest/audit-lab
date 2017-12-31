@@ -442,9 +442,9 @@ class Election(object):
         # stage time is denoted t here
 
         e.status_tm = {}
-        # mid->{"Open", "Passed", "Upset", "Exhasuted", "Off"}
+        # stage_time->mid->{"Open", "Passed", "Upset", "Exhasuted", "Off"}
         # status for a measurement for a given stage
-        # dict mapping mids to strings
+        # dict mapping stage_time and mids to strings
 
         e.plan_tp = {}
         # stage_time->pbcid->float

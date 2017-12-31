@@ -89,6 +89,11 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
     The comparison and ballot-polling audits are blended here; the
     reported election data just records a ("-noCVR",) vote for the 
     reported vote in a noCVR paper ballot collection.
+
+    This means that ballot-polling audits have a prior of pseudocount_base,
+    while comparison audits have a prior of pseudocount_base for off-diagonal
+    (non-equal reported and actual) vote pairs, but a prior of pseudocount_match
+    for equal reported-vote and actual-vote pairs.
     """
 
     cid = e.cid_m[mid]

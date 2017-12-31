@@ -103,8 +103,7 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
             for rv in sorted(sn_tcpra[e.stage_time][cid][pbcid]):
                 tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
                 for av in e.votes_c[cid]:
-                    if av not in tally:
-                        tally[av] = 0
+                    tally[av] = tally.get(av, 0)
                     tally[av] += (e.pseudocount_match if av==rv
                                   else e.pseudocount_base)
                 dirichlet_dict = dirichlet(tally)

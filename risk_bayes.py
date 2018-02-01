@@ -71,7 +71,8 @@ def dirichlet(tally):
                   The domain of dir is identical to the domain of tally.
     """
 
-    # make sure order of applying gamma is deterministic, for reproducibility
+    # Use 'sorted' to make sure order of applying gamma is deterministic,
+    # for reproducibility, since gamma is randomized.
     dir = {vote: gamma(tally[vote]) for vote in sorted(tally)}
     total = sum(dir.values())
     dir = {vote: dir[vote] / total for vote in dir}
@@ -115,6 +116,9 @@ def multinomial(n, ps):
 
     n_floor = int(n)
     n_frac = n - n_floor
+    # As in dirichlet routine, use 'sorted' here to ensure that computations
+    # are reproducible -- randomization happens in the same order each time.
+    # (Such considerations deal with internals of np.random.multinomial...)
     votes_sorted = sorted(ps)
     ps_sorted = [ps[vote] for vote in votes_sorted]
     multinomial_freqs_sorted = np.random.multinomial(n_floor, ps_sorted)
@@ -171,36 +175,43 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
             for rv in sorted(sn_tcpra[e.stage_time][cid][pbcid]):
 
                 # (0) Obtain stratum_size, sample_size, nonsample_size
+                # Note that nonsample_size is expected, but not required, to be an int.
                 stratum_size = e.rn_cpr[cid][pbcid][rv]
                 sample_size = sum([sn_tcpra[e.stage_time][cid][pbcid][rv][av]
                                    for av in sn_tcpra[e.stage_time][cid][pbcid][rv]])
                 nonsample_size = stratum_size - sample_size
-                assert nonsample_size == int(nonsample_size) 
 
-                # (1) tally is count of votes per av (actual vote) in this stratum sample
-                tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
+                # (1) sample_tally is dict of count of votes per av (actual vote)
+                #     in this stratum sample
+                #     Ensure that every possible vote is represented
+                #     (even with 0 count).
+                sample_tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
+                for av in e.votes_c[cid]:
+                    sample_tally[av] = sample_tally.get(av, 0)
 
                 # (2) add in pseudocounts for Bayesian prior for all av
+                sample_tally_with_prior = sample_tally.copy()
                 for av in e.votes_c[cid]:
-                    tally[av] = tally.get(av, 0)
-                    tally[av] += (e.pseudocount_match if av==rv
-                                  else e.pseudocount_base)
+                    sample_tally_with_prior[av] += (e.pseudocount_match if av==rv
+                                                    else e.pseudocount_base)
 
                 # (3) Obtain Dirichlet probability distribution corresponding to
                 #     hyperparameters given in the tally, indexed by av
-                dirichlet_dict = dirichlet(tally)
+                dirichlet_dict = dirichlet(sample_tally_with_prior)
 
-                # (4) Obtain test_tally by adding tally to estimate of number of
-                #     votes in nonsample for each av, where latter is obtained by
-                #     using multinomial distribution based on given Dirichlet
-                #     parameters.
-                avs = list(dirichlet_dict.keys())
-                ps = [dirichlet_dict[av] for av in avs]
-                est_votes = np.random.multinomial(nonsample_size, ps)
-                for iav, av in enumerate(avs):
-                    test_tally[av] += tally[av]
-                    # old: test_tally[av] += dirichlet_dict[av] * nonsample_size
-                    test_tally[av] += est_votes[iav]
+                # (4) Get multinomial sample with given probability distribution
+                #     (This is Dirichlet-multinomial distribution, after all.)
+                #     This has little effect if nonsample_size is large, as it
+                #     often is.  But when nonsample_size is small, it can matter.
+                #     (By providing more variance.)
+                #     This also forces frequencies to be integer, assuming
+                #     nonsample_size is integer.
+                multinomial_freq = multinomial(nonsample_size, dirichlet_dict)
+
+                # (5) Update test_tally by adding multinomial freqs to each
+                #     component.
+                for av in dirichlet_dict:
+                    test_tally[av] += multinomial_freq[av]
 
         if e.ro_c[cid] != outcomes.compute_outcome(e, cid, test_tally):  
             wrong_outcome_count += 1

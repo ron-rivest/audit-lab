@@ -17,6 +17,7 @@ primitive, are sketched in risk_bayes_2.py.)
 
 import copy
 import logging
+import numpy as np
 
 import audit
 import outcomes
@@ -25,11 +26,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ##############################################################################
+# Probability distributions
+
 # Gamma distribution
 # https://docs.scipy.org/doc/numpy-1.11.0/reference/generated/numpy.random.gamma.html
 # from numpy.random import gamma
 # To generate random gamma variate with mean k:
 # gamma(k)  or rs.gamma(k) where rs is a numpy.random.RandomState object
+# This routine is used primarily to allow efficient generation of Dirichlet
+# posterior distributions.
 
 
 def gamma(k, rs=None):
@@ -51,17 +56,79 @@ def gamma(k, rs=None):
 
 def dirichlet(tally):
     """ 
-    Given tally dict mapping votes (tuples of selids) to nonnegative ints (counts), 
+    Given tally dict mapping votes (tuples of selids) to counts, 
     return dict mapping those votes to elements of Dirichlet distribution sample on
     those votes, where tally values are used as Dirichlet hyperparameters.
     The values produced sum to one.
+
+    Input:
+        tally     dict mapping votes (tuples of selids) 
+                  to counts (nonnegative reals, often ints, but not necessarily)
+
+    Output:
+        dir       dict mapping votes (tuples of selids) to reals (probabilities)
+                  probabilities are real and sum to one.
+                  The domain of dir is identical to the domain of tally.
     """
 
-    # make sure order of applying gamma is deterministic, for reproducibility
+    # Use 'sorted' to make sure order of applying gamma is deterministic,
+    # for reproducibility, since gamma is randomized.
     dir = {vote: gamma(tally[vote]) for vote in sorted(tally)}
     total = sum(dir.values())
     dir = {vote: dir[vote] / total for vote in dir}
     return dir
+
+
+# Multinomial distribution
+
+def multinomial(n, ps):
+    """
+    Given nonnegative value n (typically an int) and a dict ps of probabilities, 
+    return sample of size n drawn according to multinomial distribution defined with the 
+    given probabilities.
+
+    This is similar to numpy.random.multinomial (which it uses), but
+        -- its input (ps) is a dict rather than an array
+           the input domain is a set of votes (tuples of selids) and
+           the output range are probabilities.
+        -- the output (freq) is a dict rather than an array, mapping
+           votes (tuples of selids) to frequencies.  The domain of freq
+           is equal to the domain of ps.  The values in freq are nonnegative
+           and sum to n.
+        -- The standard definition of a multinomial distribution only allows for
+           sample sizes n that are integers, and only gives frequencies that
+           are integers.  The current routine encompasses this as a special case:
+           when n is an integer the frequencies are integers distributed according
+           to the standard multinomial definition.
+           But when n is not an integer, this routine still returns a 
+           meaningful result (although there is no definition I could find in the
+           literature for a multinomial distribution with non-integral values of n).
+           This result is accomplished by adding, to each vote, the
+           fractional part of n multiplied by the given probability for that vote.
+           This extension ensures that risk_bayes will give reasonable results 
+           even in situations (like, perhaps weighted STV voting) where votes are
+           present with non-integral frequencies.
+
+    Example:
+           multinomial(100.5, {'A':0.6, 'B':0.4}) ==> {'A':70.3, 'B':30.2}
+
+    """
+
+    n_floor = int(n)
+    n_frac = n - n_floor
+    # As in dirichlet routine, use 'sorted' here to ensure that computations
+    # are reproducible -- randomization happens in the same order each time.
+    # (Such considerations deal with internals of np.random.multinomial...)
+    votes_sorted = sorted(ps)
+    ps_sorted = [ps[vote] for vote in votes_sorted]
+    multinomial_freqs_sorted = np.random.multinomial(n_floor, ps_sorted)
+    freq = {vote: vote_freq
+            for (vote, vote_freq)
+            in zip(votes_sorted, multinomial_freqs_sorted)}
+    if n_frac>0:
+        for vote in votes_sorted:
+            freq[vote] += n_frac * ps[vote]
+    return freq
 
 
 ##############################################################################
@@ -103,25 +170,52 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
     for trial in range(trials):
         test_tally = {vote: 0 for vote in e.votes_c[cid]}
         for pbcid in sorted(e.possible_pbcid_c[cid]):
-            # Draw from posterior for each paper ballot collection, sum them.
-            # Stratify by reported vote.
+            # Draw from posterior for each paper ballot collection, sum over pbcids.
+            # Stratify by reported vote rv within each pbcid.
             for rv in sorted(sn_tcpra[e.stage_time][cid][pbcid]):
-                tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
-                for av in e.votes_c[cid]:
-                    tally[av] = tally.get(av, 0)
-                    tally[av] += (e.pseudocount_match if av==rv
-                                  else e.pseudocount_base)
-                dirichlet_dict = dirichlet(tally)
+
+                # (0) Obtain stratum_size, sample_size, nonsample_size
+                # Note that nonsample_size is expected, but not required, to be an int.
                 stratum_size = e.rn_cpr[cid][pbcid][rv]
-                # sample_size = sn_tcpr[e.stage_time][cid][pbcid][rv]  
                 sample_size = sum([sn_tcpra[e.stage_time][cid][pbcid][rv][av]
                                    for av in sn_tcpra[e.stage_time][cid][pbcid][rv]])
                 nonsample_size = stratum_size - sample_size
-                for av in sorted(tally):
-                    test_tally[av] += tally[av]
-                    test_tally[av] += dirichlet_dict[av] * nonsample_size
+
+                # (1) sample_tally is dict of count of votes per av (actual vote)
+                #     in this stratum sample
+                #     Ensure that every possible vote is represented
+                #     (even with 0 count).
+                sample_tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
+                for av in e.votes_c[cid]:
+                    sample_tally[av] = sample_tally.get(av, 0)
+
+                # (2) add in pseudocounts for Bayesian prior for all av
+                sample_tally_with_prior = sample_tally.copy()
+                for av in e.votes_c[cid]:
+                    sample_tally_with_prior[av] += (e.pseudocount_match if av==rv
+                                                    else e.pseudocount_base)
+
+                # (3) Obtain Dirichlet probability distribution corresponding to
+                #     hyperparameters given in the tally, indexed by av
+                dirichlet_dict = dirichlet(sample_tally_with_prior)
+
+                # (4) Get multinomial sample with given probability distribution
+                #     (This is Dirichlet-multinomial distribution, after all.)
+                #     This has little effect if nonsample_size is large, as it
+                #     often is.  But when nonsample_size is small, it can matter.
+                #     (By providing more variance.)
+                #     This also forces frequencies to be integer, assuming
+                #     nonsample_size is integer.
+                multinomial_freq = multinomial(nonsample_size, dirichlet_dict)
+
+                # (5) Update test_tally by adding multinomial freqs to each
+                #     component.
+                for av in dirichlet_dict:
+                    test_tally[av] += multinomial_freq[av]
+
         if e.ro_c[cid] != outcomes.compute_outcome(e, cid, test_tally):  
             wrong_outcome_count += 1
+
     risk = wrong_outcome_count / e.n_trials
     e.risk_tm[e.stage_time][mid] = risk
     return risk

@@ -17,6 +17,7 @@ primitive, are sketched in risk_bayes_2.py.)
 
 import copy
 import logging
+import numpy as np
 
 import audit
 import outcomes
@@ -103,25 +104,45 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
     for trial in range(trials):
         test_tally = {vote: 0 for vote in e.votes_c[cid]}
         for pbcid in sorted(e.possible_pbcid_c[cid]):
-            # Draw from posterior for each paper ballot collection, sum them.
-            # Stratify by reported vote.
+            # Draw from posterior for each paper ballot collection, sum over pbcids.
+            # Stratify by reported vote rv within each pbcid.
             for rv in sorted(sn_tcpra[e.stage_time][cid][pbcid]):
+
+                # (0) Obtain stratum_size, sample_size, nonsample_size
+                stratum_size = e.rn_cpr[cid][pbcid][rv]
+                sample_size = sum([sn_tcpra[e.stage_time][cid][pbcid][rv][av]
+                                   for av in sn_tcpra[e.stage_time][cid][pbcid][rv]])
+                nonsample_size = stratum_size - sample_size
+                assert nonsample_size == int(nonsample_size) 
+
+                # (1) tally is count of votes per av (actual vote) in this stratum sample
                 tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
+
+                # (2) add in pseudocounts for Bayesian prior for all av
                 for av in e.votes_c[cid]:
                     tally[av] = tally.get(av, 0)
                     tally[av] += (e.pseudocount_match if av==rv
                                   else e.pseudocount_base)
+
+                # (3) Obtain Dirichlet probability distribution corresponding to
+                #     hyperparameters given in the tally, indexed by av
                 dirichlet_dict = dirichlet(tally)
-                stratum_size = e.rn_cpr[cid][pbcid][rv]
-                # sample_size = sn_tcpr[e.stage_time][cid][pbcid][rv]  
-                sample_size = sum([sn_tcpra[e.stage_time][cid][pbcid][rv][av]
-                                   for av in sn_tcpra[e.stage_time][cid][pbcid][rv]])
-                nonsample_size = stratum_size - sample_size
-                for av in sorted(tally):
+
+                # (4) Obtain test_tally by adding tally to estimate of number of
+                #     votes in nonsample for each av, where latter is obtained by
+                #     using multinomial distribution based on given Dirichlet
+                #     parameters.
+                avs = list(dirichlet_dict.keys())
+                ps = [dirichlet_dict[av] for av in avs]
+                est_votes = np.random.multinomial(nonsample_size, ps)
+                for iav, av in enumerate(avs):
                     test_tally[av] += tally[av]
-                    test_tally[av] += dirichlet_dict[av] * nonsample_size
+                    # old: test_tally[av] += dirichlet_dict[av] * nonsample_size
+                    test_tally[av] += est_votes[iav]
+
         if e.ro_c[cid] != outcomes.compute_outcome(e, cid, test_tally):  
             wrong_outcome_count += 1
+
     risk = wrong_outcome_count / e.n_trials
     e.risk_tm[e.stage_time][mid] = risk
     return risk

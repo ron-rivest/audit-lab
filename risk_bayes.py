@@ -26,11 +26,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 ##############################################################################
+# Probability distributions
+
 # Gamma distribution
 # https://docs.scipy.org/doc/numpy-1.11.0/reference/generated/numpy.random.gamma.html
 # from numpy.random import gamma
 # To generate random gamma variate with mean k:
 # gamma(k)  or rs.gamma(k) where rs is a numpy.random.RandomState object
+# This routine is used primarily to allow efficient generation of Dirichlet
+# posterior distributions.
 
 
 def gamma(k, rs=None):
@@ -52,10 +56,19 @@ def gamma(k, rs=None):
 
 def dirichlet(tally):
     """ 
-    Given tally dict mapping votes (tuples of selids) to nonnegative ints (counts), 
+    Given tally dict mapping votes (tuples of selids) to counts, 
     return dict mapping those votes to elements of Dirichlet distribution sample on
     those votes, where tally values are used as Dirichlet hyperparameters.
     The values produced sum to one.
+
+    Input:
+        tally     dict mapping votes (tuples of selids) 
+                  to counts (nonnegative reals, often ints, but not necessarily)
+
+    Output:
+        dir       dict mapping votes (tuples of selids) to reals (probabilities)
+                  probabilities are real and sum to one.
+                  The domain of dir is identical to the domain of tally.
     """
 
     # make sure order of applying gamma is deterministic, for reproducibility
@@ -63,6 +76,55 @@ def dirichlet(tally):
     total = sum(dir.values())
     dir = {vote: dir[vote] / total for vote in dir}
     return dir
+
+
+# Multinomial distribution
+
+def multinomial(n, ps):
+    """
+    Given nonnegative value n (typically an int) and a dict ps of probabilities, 
+    return sample of size n drawn according to multinomial distribution defined with the 
+    given probabilities.
+
+    This is similar to numpy.random.multinomial (which it uses), but
+        -- its input (ps) is a dict rather than an array
+           the input domain is a set of votes (tuples of selids) and
+           the output range are probabilities.
+        -- the output (freq) is a dict rather than an array, mapping
+           votes (tuples of selids) to frequencies.  The domain of freq
+           is equal to the domain of ps.  The values in freq are nonnegative
+           and sum to n.
+        -- The standard definition of a multinomial distribution only allows for
+           sample sizes n that are integers, and only gives frequencies that
+           are integers.  The current routine encompasses this as a special case:
+           when n is an integer the frequencies are integers distributed according
+           to the standard multinomial definition.
+           But when n is not an integer, this routine still returns a 
+           meaningful result (although there is no definition I could find in the
+           literature for a multinomial distribution with non-integral values of n).
+           This result is accomplished by adding, to each vote, the
+           fractional part of n multiplied by the given probability for that vote.
+           This extension ensures that risk_bayes will give reasonable results 
+           even in situations (like, perhaps weighted STV voting) where votes are
+           present with non-integral frequencies.
+
+    Example:
+           multinomial(100.5, {'A':0.6, 'B':0.4}) ==> {'A':70.3, 'B':30.2}
+
+    """
+
+    n_floor = int(n)
+    n_frac = n - n_floor
+    votes_sorted = sorted(ps)
+    ps_sorted = [ps[vote] for vote in votes_sorted]
+    multinomial_freqs_sorted = np.random.multinomial(n_floor, ps_sorted)
+    freq = {vote: vote_freq
+            for (vote, vote_freq)
+            in zip(votes_sorted, multinomial_freqs_sorted)}
+    if n_frac>0:
+        for vote in votes_sorted:
+            freq[vote] += n_frac * ps[vote]
+    return freq
 
 
 ##############################################################################

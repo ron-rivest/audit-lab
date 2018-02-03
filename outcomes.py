@@ -17,6 +17,7 @@ An outcome is always a *tuple* of ids, even if there is only one winner.
 import ids
 
 
+
 def compute_tally(vec):
     """
     Here vec is an iterable of hashable elements.
@@ -38,7 +39,6 @@ def plurality(e, cid, tally):
     an Exception is raised if this is not possible.
     An undervote or an overvote can't win.
     """
-
     max_cnt = -1e90
     max_vote = None
     for vote in tally:
@@ -47,9 +47,27 @@ def plurality(e, cid, tally):
            not ids.is_error_selid(vote[0]):
             max_cnt = tally[vote]
             max_vote = vote
+
     if max_vote==None:
         assert "No winner allowed in plurality contest.", tally
     return max_vote
+
+
+def approval(e,cid,tally):
+    """
+    {("Alice","Bob"):3,("Alice"):2,("Eve"):1,():4}
+    """
+    approval_tally = {}
+    for accepted_candidates in tally.keys():
+        count = tally[accepted_candidates]
+        for candidate in accepted_candidates:
+            if candidate in approval_tally.keys():
+                approval_tally[candidate] = approval_tally[candidate] + count
+            else:
+                approval_tally[candidate] =  count
+    fixed_approval_tally = {(k,) : approval_tally[k] for k in approval_tally.keys() }
+    outcome = plurality(e,cid,fixed_approval_tally)
+    return outcome
 
 
 def compute_ro_c(e):
@@ -70,6 +88,8 @@ def compute_outcome(e, cid, tally):
 
     if e.contest_type_c[cid].lower()=="plurality":
         return plurality(e, cid, tally)
+    elif e.contest_type_c[cid].lower()=="approval":
+        return approval(e, cid, tally)
     else:
         # TBD: IRV, etc...
         raise NotImplementedError(("Non-plurality outcome rule {} for contest {}"

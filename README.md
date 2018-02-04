@@ -1639,19 +1639,26 @@ This section sketches the command-line interface to ``multi.py``.
 Here we assume the election data is in the directory
 ``./elections/CO-2017-11``.
 
+The command
+
+    export PYTHONPATH=$PYTHONPATH:code
+
+should be run so that python knows where to find the code modules (that is in the ``code``
+subdirectory), when it does python "imports".
+
 | Command                                             | Action                              |
 |---                                                  |---                                  |
-| ``python3 multi.py --read_election_spec CO-2017-11``| Reads and checks election spec
-| ``python3 multi.py --read_reported CO-2017-11``     | Reads and checks reported data      |
-| ``python3 multi.py --read_seed CO-2017-11``         | Reads and checks audit seed         |
-| ``python3 multi.py --make_audit orders CO-2017-11`` | Produces initial audit order files  |
-| ``python3 multi.py --read_audited CO-2017-11``      | Reads and checks audited votes      |
-| ``python3 multi.py --audit CO-2017-11``             | Runs audit                          |
-| ``python3 multi.py --audit --pause CO-2017-11``     | Runs audit, pausing after each stage |
+| ``python code/multi.py --read_election_spec CO-2017-11``| Reads and checks election spec
+| ``python code/multi.py --read_reported CO-2017-11``     | Reads and checks reported data      |
+| ``python code/multi.py --read_seed CO-2017-11``         | Reads and checks audit seed         |
+| ``python code/multi.py --make_audit orders CO-2017-11`` | Produces initial audit order files  |
+| ``python code/multi.py --read_audited CO-2017-11``      | Reads and checks audited votes      |
+| ``python code/multi.py --audit CO-2017-11``             | Runs audit                          |
+| ``python code/multi.py --audit --pause CO-2017-11``     | Runs audit, pausing after each stage |
 
 You can also run
 
-    python3 multi.py --help
+    python code/multi.py --help
 
 to get usage instructions.
 
@@ -1671,7 +1678,7 @@ In addition to ``multi.py``, there is another program called ``syn.py``, for
 generating sythetic data sets.
 Run
 
-    python3 syn.py --help
+    python code/syn.py --help
 
 to get usage instructions.
 

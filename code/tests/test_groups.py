@@ -1,9 +1,9 @@
 """ test_groups.py: 
-    test the implementation of "contest groups" in 'multi' 
+    test the implementation of "contest groups" in 'OpenAuditTool' 
     (as implemented in groups.py)
 """
 
-import multi
+import OpenAuditTool
 import groups
 import warnings
 
@@ -21,7 +21,7 @@ def graph_1(e):
 
 def test_expand_contest_group_defs():
 
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     graph_1(e)
 
     with warnings.catch_warnings(record=True) as w:
@@ -59,7 +59,7 @@ def graph_2(e):
 
 def test_expand_contest_groups_defs_2():
 
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     graph_2(e)
 
     with warnings.catch_warnings(record=True) as w:
@@ -86,7 +86,7 @@ def test_expand_contest_groups_defs_2():
 
 def test_expand_gids_in_list():
 
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     graph_1(e)
 
     with warnings.catch_warnings(record=True) as w:

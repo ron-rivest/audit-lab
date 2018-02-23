@@ -7,7 +7,7 @@ import shutil
 import warnings
 
 import ids
-import multi
+import OpenAuditTool
 import syn1
 import syn2
 
@@ -20,7 +20,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=\
                                      ("syn.py: "
                                       "Generates synthetic elections for "
-                                      "multi.py, a Bayesian post-election "
+                                      "OpenAuditTool.py, a Bayesian post-election "
                                       "audit program for an election with "
                                       "multiple contests and multiple paper "
                                       "ballot collections."))
@@ -54,7 +54,7 @@ def dispatch(e, args):
     e.election_dirname = ids.filename_safe(args.election_dirname)
     e.election_name = e.election_dirname
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
 
     if os.path.exists(dirpath):
         warnings.warn("Erasing previous contents of directory {}.".format(dirpath))

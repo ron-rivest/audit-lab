@@ -4,7 +4,7 @@
 # python3
 
 """
-Routines to work with multi.py on post-election audits.
+Routines to work with OpenAuditTool.py on post-election audits.
 Specifically, to produce an "audit plan" for the next stage,
 given what has been done already, and the results obtained
 from the previous stage.

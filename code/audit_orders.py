@@ -4,7 +4,7 @@
 # python3
 
 """
-Routine to work with multi.py program for election audits.
+Routine to work with OpenAuditTool.py program for election audits.
 Generates random audit orders from a ballot manifest 
 and an audit seed, for each paper ballot collection.
 
@@ -21,7 +21,7 @@ import hashlib
 import logging
 import os
 
-import multi
+import OpenAuditTool
 import ids
 import utils
 
@@ -86,7 +86,7 @@ def write_audit_orders(e):
 
 def write_audit_order(e, pbcid):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname,
                            "3-audit", "32-audit-orders")
     os.makedirs(dirpath, exist_ok=True)
     ds = utils.datetime_string()

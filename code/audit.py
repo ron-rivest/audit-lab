@@ -4,7 +4,7 @@
 # python3
 
 """
-Routines to work with multi.py on post-election audits.
+Routines to work with OpenAuditTool.py on post-election audits.
 """
 
 import logging
@@ -12,7 +12,7 @@ import os
 import warnings
 import time
 
-import multi
+import OpenAuditTool
 import csv_readers
 import ids
 import outcomes
@@ -207,7 +207,7 @@ def read_audit_spec(e, args):
 def read_audit_spec_global(e, args):
     """ Read 3-audit/31-audit-spec/audit-spec-global.csv """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT,
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                                      e.election_dirname)
     audit_spec_pathname = os.path.join(election_pathname,
                                        "3-audit",
@@ -229,7 +229,7 @@ def read_audit_spec_global(e, args):
 def read_audit_spec_contest(e, args):
     """ Read 3-audit/31-audit-spec/audit-spec-contest.csv """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT,
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                                      e.election_dirname)
     audit_spec_pathname = os.path.join(election_pathname,
                                        "3-audit",
@@ -264,7 +264,7 @@ def read_audit_spec_contest(e, args):
 def read_audit_spec_collection(e, args):
     """ Read 3-audit/31-audit-spec/audit-spec-collection.csv """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT,
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                                      e.election_dirname)
     audit_spec_pathname = os.path.join(election_pathname,
                                        "3-audit",
@@ -289,7 +289,7 @@ def read_audit_spec_seed(e, args):
     because this means it was already set from the command line.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT,
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                                      e.election_dirname)
     audit_spec_pathname = os.path.join(election_pathname,
                                        "3-audit",
@@ -385,7 +385,7 @@ def read_audited_votes(e):
     Read audited votes from 3-audit/33-audited-votes/audited-votes-PBCID.csv 
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT,
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                                      e.election_dirname)
     audited_votes_pathname = os.path.join(election_pathname,
                                           "3-audit",
@@ -449,7 +449,7 @@ def write_audit_output_contest_status(e):
     except for status field.
     """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "34-audit-output")
@@ -483,7 +483,7 @@ def write_audit_output_contest_status(e):
 def write_audit_output_collection_status(e):
     """ Write 3-audit/34-audit-output/audit_output_collection_status.csv """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "34-audit-output")

@@ -4,7 +4,7 @@
 # python3
 
 """
-Routines to generate a synthetic test election dataset for multi.py.
+Routines to generate a synthetic test election dataset for OpenAuditTool.py.
 
 Calls data generation routines in syn1.py for elections "of type 1",
 and calls routines in syn2.py for elections "of type 2".
@@ -14,7 +14,7 @@ and calls routines in syn2.py for elections "of type 2".
 import numpy as np
 
 import cli_syn
-import multi
+import OpenAuditTool
 
 class Syn_Params(object):
     """ An object we can hang synthesis generation parameters off of. """
@@ -94,7 +94,7 @@ def generate_segments(e, syn, low, high):
 
 if __name__=="__main__":
 
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     args = cli_syn.parse_args()
     cli_syn.dispatch(e, args)
 

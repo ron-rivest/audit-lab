@@ -4,7 +4,7 @@
 # python3
 
 """
-Code that works with multi.py for post-election audit support.
+Code that works with OpenAuditTool.py for post-election audit support.
 This code reads and checks the "reported" results: votes
 and reported outcomes.
 
@@ -37,7 +37,7 @@ import logging
 import os
 import warnings
 
-import multi
+import OpenAuditTool
 import csv_readers
 import ids
 import utils
@@ -70,7 +70,7 @@ def read_reported_ballot_manifests(e):
     Read ballot manifest file 21-reported-ballot-manifests and expand rows if needed.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     specification_pathname = os.path.join(election_pathname,
                                           "2-reported",
                                           "21-reported-ballot-manifests")
@@ -122,7 +122,7 @@ def read_reported_cvrs(e):
     Read reported votes 22-reported-cvrs/reported-cvrs-PBCID.csv.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     specification_pathname = os.path.join(election_pathname,
                                           "2-reported","22-reported-cvrs")
     fieldnames = ["Collection", "Scanner", "Ballot id",
@@ -147,7 +147,7 @@ def read_reported_cvrs(e):
 
 def read_reported_outcomes(e):
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     specification_pathname = os.path.join(election_pathname,
                                           "2-reported")
     fieldnames = ["Contest", "Winner(s)"]

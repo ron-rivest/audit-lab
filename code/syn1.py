@@ -9,7 +9,7 @@ Called from syn.py.
 """
 
 """
-e is of type multi.Election
+e is of type OpenAuditTool.Election
 synpar is an object of type syn.Syn_Parameters
 """
 
@@ -85,7 +85,7 @@ def default_parameters(synpar):
 
 def generate_election_spec(e, synpar):
     """ 
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     synpar = Syn_Params()
     synpar supplies additional paramters as noted above;
     add to e values that would be otherwise read in,

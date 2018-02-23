@@ -4,7 +4,7 @@
 # python3
 
 """
-Code to work with multi.py on post-election audits.
+Code to work with OpenAuditTool.py on post-election audits.
 Various utilities.
 """
 

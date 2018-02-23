@@ -6,7 +6,7 @@
 import json
 import os
 
-import multi
+import OpenAuditTool
 import utils
 
 
@@ -66,7 +66,7 @@ def write_state(e, ss):
     the stage_time.
     """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "34-audit-output")
@@ -83,7 +83,7 @@ def read_saved_state(e):
     Read state from latest 3-audit/34-audit-output/audit-output-saved-state.json 
     """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "34-audit-output")

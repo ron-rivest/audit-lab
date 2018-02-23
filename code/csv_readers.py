@@ -4,7 +4,7 @@
 # python3
 
 """
-Code to read the various files that multi.py uses from their CSV formats.
+Code to read the various files that OpenAuditTool.py uses from their CSV formats.
 """
 
 """

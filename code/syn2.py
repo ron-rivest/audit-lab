@@ -6,7 +6,7 @@
 """
 Routines to generate synthetic elections of "type 2".
 Called from syn.py.
-In support of multi.py audit support program.
+In support of OpenAuditTool.py audit support program.
 """
 
 import copy
@@ -14,7 +14,7 @@ import logging
 import numpy as np
 import os
 
-import multi
+import OpenAuditTool
 import csv_readers
 import audit_orders
 import utils
@@ -28,7 +28,7 @@ def process_spec(e, synpar, L):
     """
     Initialize Election e according to spec in list L.
 
-    Here e is of type multi.Election
+    Here e is of type OpenAuditTool.Election
 
     Here synpar is of type syn.Syn_Parameters
 
@@ -130,7 +130,7 @@ def read_syn2_csv(e, synpar):
     Read file defining syn2 synthetic election spec. 
     """
 
-    syn2_pathname = os.path.join(multi.ELECTIONS_ROOT, 
+    syn2_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, 
                                  "syn2_specs")
     filename = utils.greatest_name(syn2_pathname,
                                    synpar.election_dirname,

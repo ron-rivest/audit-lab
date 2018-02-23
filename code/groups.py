@@ -5,7 +5,7 @@
 
 """
 This module implements "contest groups" for the post-election audit program
-"multi.py".  
+"OpenAuditTool.py".  
 """
 
 import warnings

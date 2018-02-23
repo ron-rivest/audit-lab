@@ -4,7 +4,7 @@
 # python3
 
 """
-Routines to work with multi.py, to read in the
+Routines to work with OpenAuditTool.py, to read in the
 CSV files containing information about the specification
 of an election.  They are in the directory
    1-election-spec
@@ -53,14 +53,14 @@ DEN-A02    , bob@co.gov       , CVR       , DENVER,            DENVER
 LOG-B13    , carol@co.gov     , noCVR     , LOGAN REQ,         LOGAN POSS
 
 The values are sanity checked, and put into the Election data structure (e)
-from multi.py
+from OpenAuditTool.py
 """
 
 import logging
 import os
 import warnings
 
-import multi
+import OpenAuditTool
 import csv_readers
 import groups
 import utils
@@ -76,7 +76,7 @@ def read_election_spec_general(e, election_dirname):
         (e.g. "CO-2017-11") with ELECTIONS_ROOT
     """
     
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, election_dirname)
     spec_pathname = os.path.join(election_pathname, "1-election-spec")
     filename = utils.greatest_name(spec_pathname, "election-spec-general", ".csv")
     file_pathname = os.path.join(spec_pathname, filename)
@@ -114,7 +114,7 @@ def read_election_spec_contests(e):
     Read file election-spec-contests.csv, put results into Election e.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     spec_pathname = os.path.join(election_pathname, "1-election-spec")
     filename = utils.greatest_name(spec_pathname, "election-spec-contests", ".csv")
     file_pathname = os.path.join(spec_pathname, filename)
@@ -149,7 +149,7 @@ def read_election_spec_contest_groups(e):
     Read file election-spec-contest-groups.csv, put results into Election e.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     spec_pathname = os.path.join(election_pathname, "1-election-spec")
     filename = utils.greatest_name(spec_pathname, "election-spec-contest-groups", ".csv")
     file_pathname = os.path.join(spec_pathname, filename)
@@ -175,7 +175,7 @@ def read_election_spec_collections(e):
     Read file 14-collections.csv, put results into Election e.
     """
 
-    election_pathname = os.path.join(multi.ELECTIONS_ROOT, e.election_dirname)
+    election_pathname = os.path.join(OpenAuditTool.ELECTIONS_ROOT, e.election_dirname)
     spec_pathname = os.path.join(election_pathname, "1-election-spec")
     filename = utils.greatest_name(spec_pathname, "election-spec-collections", ".csv")
     file_pathname = os.path.join(spec_pathname, filename)
@@ -342,7 +342,7 @@ def show_election_spec(e):
 
 
 def test():
-    e = multi.Election()
+    e = OpenAuditTool.Election()
     test_read_election_spec_general(e)
     test_read_election_spec_contests(e)
     test_read_election_spec_contest_groups(e)

@@ -1,10 +1,10 @@
-# cli_multi.py
+# cli_OpenAuditTool.py
 # Ronald L. Rivest
 # July 22, 2017 (rev. September 21, 2017)
 # python3
 
 """
-Command-line parser and dispatch for multi.py
+Command-line parser and dispatch for OpenAuditTool.py
 """
 
 
@@ -12,7 +12,7 @@ import argparse
 import logging
 
 import audit_orders
-import multi
+import OpenAuditTool
 import election_spec
 import ids
 import audit
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def parse_args():
 
-    parser = argparse.ArgumentParser(description="""multi.py: A Bayesian post-election audit program for an
+    parser = argparse.ArgumentParser(description="""OpenAuditTool.py: A Bayesian post-election audit program for an
             election with multiple contests and multiple paper ballot 
             collections.""")
 
@@ -85,7 +85,7 @@ def dispatch(e, args):
 
     e.election_name = args.election_name
 
-    multi.ELECTIONS_ROOT = args.elections_root
+    OpenAuditTool.ELECTIONS_ROOT = args.elections_root
 
     if args.set_audit_seed != None:
         audit.set_audit_seed(e, args.set_audit_seed)

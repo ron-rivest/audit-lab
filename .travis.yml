@@ -14,7 +14,7 @@ install:
   - pip install python-coveralls
 
 script:
-  - nosetests --with-coverage --cover-package=csv_readers,groups,ids,multi,utils ./code/tests
+  - nosetests --with-coverage --cover-package=csv_readers,groups,ids,OpenAuditTool,utils ./code/tests
 
 after_success:
   - coveralls

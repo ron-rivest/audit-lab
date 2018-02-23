@@ -1,11 +1,11 @@
-# multi.py
+# OpenAuditTool.py
 # Ronald L. Rivest
 # (with help from Karim Husayn Karimi and Neal McBurnett)
 # July 27, 2017
 
 # python3
 # clean up with autopep8
-#   autopep8 -i multi.py
+#   autopep8 -i OpenAuditTool.py
 #   (updates in place; see https://github.com/hhatto/autopep8)
 
 """
@@ -32,7 +32,7 @@ import logging
 logging.basicConfig(level=logging.INFO,format="%(message)s")
 logger = logging.getLogger(__name__)
 
-import cli_multi
+import cli_OpenAuditTool
 import utils
 
 ##############################################################################
@@ -488,15 +488,15 @@ class Election(object):
 
 
 def main():
-    logger.info("multi.py -- Bayesian audit support program.")
+    logger.info("OpenAuditTool.py -- Bayesian audit support program.")
 
     utils.start_datetime_string = utils.datetime_string()
     logger.info("Starting date-time: %s", utils.start_datetime_string)
 
-    args = cli_multi.parse_args()
+    args = cli_OpenAuditTool.parse_args()
     e = Election()
     try:
-        cli_multi.dispatch(e, args)
+        cli_OpenAuditTool.dispatch(e, args)
     finally:
         pass
 

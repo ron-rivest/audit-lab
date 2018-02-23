@@ -6,7 +6,7 @@
 """
 Routines for writing CSV files.
 
-Part of the audit support package "multi.py";; see
+Part of the audit support package "OpenAuditTool.py";; see
     https://github.com/ron-rivest/2017-bayes-audit
 
 """
@@ -16,7 +16,7 @@ import os
 
 import audit_orders
 import ids
-import multi
+import OpenAuditTool
 import utils
 
 
@@ -30,7 +30,7 @@ def write_election_spec_csv(e):
 
 def write_election_spec_general_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "1-election-spec")
     os.makedirs(dirpath, exist_ok=True)
@@ -46,7 +46,7 @@ def write_election_spec_general_csv(e):
 
 def write_election_spec_contests_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "1-election-spec")
     os.makedirs(dirpath, exist_ok=True)
@@ -67,7 +67,7 @@ def write_election_spec_contests_csv(e):
 
 def write_election_spec_contest_groups_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "1-election-spec")
     os.makedirs(dirpath, exist_ok=True)
@@ -86,7 +86,7 @@ def write_election_spec_contest_groups_csv(e):
 
 def write_election_spec_collections_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "1-election-spec")
     os.makedirs(dirpath, exist_ok=True)
@@ -117,7 +117,7 @@ def write_reported_csv(e):
 
 def write_21_ballot_manifests_csv(e):
                            
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "2-reported",
                            "21-reported-ballot-manifests")
@@ -148,7 +148,7 @@ def write_21_ballot_manifests_csv(e):
 
 def write_22_reported_cvrs_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "2-reported",
                            "22-reported-cvrs")
@@ -184,7 +184,7 @@ def write_22_reported_cvrs_csv(e):
 
 def write_23_reported_outcomes_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "2-reported")
     os.makedirs(dirpath, exist_ok=True)
@@ -218,7 +218,7 @@ def write_31_audit_spec_csv(e):
 
 def write_audit_spec_global_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "31-audit-spec")
@@ -237,7 +237,7 @@ def write_audit_spec_global_csv(e):
 
 def write_audit_spec_contest_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "31-audit-spec")
@@ -271,7 +271,7 @@ def write_audit_spec_contest_csv(e):
 
 def write_audit_spec_collection_csv(e):
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "31-audit-spec")
@@ -292,7 +292,7 @@ def write_audit_spec_collection_csv(e):
 def write_audit_spec_seed_csv(e):
     """ Write 3-audit/31-audit-spec/audit-spec-seed.csv """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "31-audit-spec")
@@ -313,7 +313,7 @@ def write_32_audit_orders_csv(e):
 def write_33_audited_votes_csv(e):
     """ Write 3-audit/33-audited-votes/audited-votes-PBCID.csv """
 
-    dirpath = os.path.join(multi.ELECTIONS_ROOT,
+    dirpath = os.path.join(OpenAuditTool.ELECTIONS_ROOT,
                            e.election_dirname,
                            "3-audit",
                            "33-audited-votes")

@@ -4,7 +4,7 @@
 # python3
 
 """
-Routines in support of audit program multi.py.
+Routines in support of audit program OpenAuditTool.py.
 These routines all related to ids:
     contest ids (cids)
     paper ballot collection ids (pbcids)

@@ -17,9 +17,9 @@ course taught by Philip Stark.
 
 Copied material starts here.
 
-# Documentation for multi.py (Bayesian audit support program)
+# Documentation for OpenAuditTool.py (Bayesian audit support program)
 
-``multi.py`` is Python3 software (or suite of programs) to support
+``OpenAuditTool.py`` is Python3 software (or suite of programs) to support
 the post-election auditing of elections with multiple contests and
 multiple separately-managed collections of paper ballots.
 
@@ -182,14 +182,14 @@ random sample of the cast paper ballots.  Audits are often several
 orders of magnitude more efficient than doing a full manual recount of
 all cast paper ballots.
 
-``Multi.py`` supports "Bayesian" audits, a form of post-election auditing
+``OpenAuditTool.py`` supports "Bayesian" audits, a form of post-election auditing
 proposed by 
 [Rivest and Shen (2012)](http://people.csail.mit.edu/rivest/pubs.html#RS12z).
 It also supports "frequentist" risk-limiting audits, as explained by
 [Lindeman and Stark (2012)](https://www.stat.berkeley.edu/~stark/Preprints/gentle12.pdf).
 (Or will; this code isn't written yet.)
 Our emphasis and strongest interest is in Bayesian audits, but the
-``multi.py`` framework allows multiple approaches to co-exist and even
+``OpenAuditTool.py`` framework allows multiple approaches to co-exist and even
 be used simultaneously.
 
 A Bayesian audit provides an answer to the question:
@@ -361,18 +361,18 @@ have been scanned:
 ## Implementation notes: identifiers, votes, file names, and directory structure
 
 This section describes some low-level but essential details regarding
-the use of identifiers in ``multi.py``, the way in which votes in a contest are
+the use of identifiers in ``OpenAuditTool.py``, the way in which votes in a contest are
 represented as a sets of identifiers, 
 use of CSV file formats,
 how transparency and reproducibility
 are supported by the use of file names that include version labels, and
-how ``multi.py`` structures information in a directory.
+how ``OpenAuditTool.py`` structures information in a directory.
 
 [Back to TOC](#table-of-contents)
 
 ### Identifiers
 
-The data structures for ``multi.py`` use identifiers extensively.
+The data structures for ``OpenAuditTool.py`` use identifiers extensively.
 Identifiers are more-or-less arbitrary strings of characters.
 
 We have several types of identifiers:
@@ -494,7 +494,7 @@ sorted into increasing lexicographic order (as strings).
 
 ### File formats
 
-``Multi.py`` uses CSV (comma-separated values) format for files;
+``OpenAuditTool.py`` uses CSV (comma-separated values) format for files;
 a single header row specifies the column labels, and each subsequent line of
 the file specifies one spreadsheet row.  A compressed format is
 suggested in the Appendix below (this is not yet implemented).
@@ -711,7 +711,7 @@ For clarity, we always write a contest group id in caps,
 as in "**FEDERAL**" or "**STATEWIDE**", although this is not
 required.
 
-The ``multi.py`` program supports a generalization of the notion of
+The ``OpenAuditTool.py`` program supports a generalization of the notion of
 a "ballot style" (a set of contests that may occur on a ballot)
 via the notion of "contest groups", and the notions of "required
 contests" and "possible contests."
@@ -911,7 +911,7 @@ The size of the collection is just the sum of the values in the
 "Number of ballots" field.
 
 The **``Number of ballots``** feature is just for compactness and
-convenience; when the ballot manifest file is read in by ``multi.py``,
+convenience; when the ballot manifest file is read in by ``OpenAuditTool.py``,
 it expands such rows representing multiple ballots into individual
 rows as described above.  So, the compact format is just "shorthand" for the
 official fully-expanded one-ballot-per-row format.
@@ -1135,7 +1135,7 @@ Audit Central then provides guidance to the collection mangers (in the
 form of a "**plan**") that details the work yet to be done.
 
 (For contests whose ballots are entirely within one collection, the
-``multi.py`` software may in principle also be run by the collection manager,
+``OpenAuditTool.py`` software may in principle also be run by the collection manager,
 if desired, to give faster evaluation of the audit progress. But the audited
 votes data should nonetheless be uploaded to Audit Central.)
 
@@ -1490,7 +1490,7 @@ Sampling is done without replacement.  Each ballot in the collection
 appears at most once in the audit order file.  The audit order file
 may grow to include all ballots in the collection.
 
-To produce the audit order, ``multi.py`` feeds the audit seed,
+To produce the audit order, ``OpenAuditTool.py`` feeds the audit seed,
 followed by a comma, the collection id, another comma, and a decimal
 counter value, into a cryptographic random number function
 (specifically, SHA256 used in counter mode, starting with counter
@@ -1635,7 +1635,7 @@ size of the "audit-order" file.
 
 ## Command-line interface
 
-This section sketches the command-line interface to ``multi.py``.
+This section sketches the command-line interface to ``OpenAuditTool.py``.
 Here we assume the election data is in the directory
 ``./elections/CO-2017-11``.
 
@@ -1648,33 +1648,33 @@ subdirectory), when it does python "imports".
 
 | Command                                             | Action                              |
 |---                                                  |---                                  |
-| ``python code/multi.py --read_election_spec CO-2017-11``| Reads and checks election spec
-| ``python code/multi.py --read_reported CO-2017-11``     | Reads and checks reported data      |
-| ``python code/multi.py --read_seed CO-2017-11``         | Reads and checks audit seed         |
-| ``python code/multi.py --make_audit orders CO-2017-11`` | Produces initial audit order files  |
-| ``python code/multi.py --read_audited CO-2017-11``      | Reads and checks audited votes      |
-| ``python code/multi.py --audit CO-2017-11``             | Runs audit                          |
-| ``python code/multi.py --audit --pause CO-2017-11``     | Runs audit, pausing after each stage |
+| ``python code/OpenAuditTool.py --read_election_spec CO-2017-11``| Reads and checks election spec
+| ``python code/OpenAuditTool.py --read_reported CO-2017-11``     | Reads and checks reported data      |
+| ``python code/OpenAuditTool.py --read_seed CO-2017-11``         | Reads and checks audit seed         |
+| ``python code/OpenAuditTool.py --make_audit orders CO-2017-11`` | Produces initial audit order files  |
+| ``python code/OpenAuditTool.py --read_audited CO-2017-11``      | Reads and checks audited votes      |
+| ``python code/OpenAuditTool.py --audit CO-2017-11``             | Runs audit                          |
+| ``python code/OpenAuditTool.py --audit --pause CO-2017-11``     | Runs audit, pausing after each stage |
 
 You can also run
 
-    python code/multi.py --help
+    python code/OpenAuditTool.py --help
 
 to get usage instructions.
 
-The program ``multi.py`` will be run by Audit Central for each stage.
+The program ``OpenAuditTool.py`` will be run by Audit Central for each stage.
 
 It may also be run by an audit observer, since no data is ever lost.  That is,
 inputs to each audit stage computation are still available for re-doing any
 of the audit computations.  (The snapshots file may need to be used here to
 assist in obtaining the correct input files.)
 
-Because of the way ``multi.py`` works, the program can be run by Audit
+Because of the way ``OpenAuditTool.py`` works, the program can be run by Audit
 Central, or by a local collection manager.  For the latter use, the audit
 parameters should to be adjusted to only those audit contests local to the collection, 
 by setting the risk limits to all other contests to 1.00.
 
-In addition to ``multi.py``, there is another program called ``syn.py``, for
+In addition to ``OpenAuditTool.py``, there is another program called ``syn.py``, for
 generating sythetic data sets.
 Run
 
@@ -1765,7 +1765,7 @@ The earlier file may be deleted, if desired.
 
 ### Compression
 
-As the reported votes files are certain to be the largest files used by ``multi.py``,
+As the reported votes files are certain to be the largest files used by ``OpenAuditTool.py``,
 some form of compression may be useful.
 
 Here is a suggestion (for possible later implementation), suitable for compressing

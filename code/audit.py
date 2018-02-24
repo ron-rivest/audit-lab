@@ -371,13 +371,15 @@ def show_audit_stage_header(e):
 
     logger.info("audit stage time %s", e.stage_time)
     logger.info("    New target sample sizes by paper ballot collection:")
+    slack = risk_bayes.compute_slack_p(e)
     for pbcid in e.pbcids:
         last_s = e.saved_state["sn_tp"][e.saved_state["stage_time"]]
-        logger.info("      {}: {} (+{})"
+        logger.info("      {}: {} (+{}; {} left)"
                 .format(pbcid,
                         e.saved_state["plan_tp"][e.saved_state["stage_time"]][pbcid],
                         e.saved_state["plan_tp"][e.saved_state["stage_time"]][pbcid] - \
-                            last_s[pbcid]))
+                            last_s[pbcid],
+                        slack[pbcid]))
 
 
 def read_audited_votes(e):
@@ -542,7 +544,6 @@ def audit(e, args):
             break
         planner.compute_plan(e)
 
-        logger.info("Slack: %s", risk_bayes.compute_slack_p(e))
         mid = e.mids[0]
         risk_bayes.tweak_all(e, mid)
 

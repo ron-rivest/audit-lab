@@ -1,0 +1,5 @@
+Contest,    Collection,    Reported Vote,    Actual Vote,  Number
+Mayor,      PBC1,          Alice,            Alice,        45500
+Mayor,      PBC1,          Bob,              Bob,          49500
+Mayor,      PBC2,          -noCVR,           Alice,        7500
+Mayor,      PBC2,          -noCVR,           Bob,          1500

@@ -75,15 +75,34 @@ def parse_args():
                         action="store_true",
                         help="Pause after each audit stage to obtain confirmation before proceedings.")
 
+    parser.add_argument("--sample_by_size",
+                        help="If true, then use sampling schemes, which use varying sample sizes on each"
+                        " county, based on Dirichlet-Multinomial simulations.",
+                        default=False)
+
+    parser.add_argument("--num_winners",
+                        help="When doing a sampling scheme with different sample sizes per county, "
+                        "the number of winners required to consider a single "
+                        "iteration as correct.",
+                        default=2)
+    parser.add_argument("--max_num_it",
+                        help="When doing a sampling scheme with different sample "
+                        "sizes per county, the number of iterations to run a random walk "
+                        "to find how much to extend a county's sample by.",
+                        default=100)
+
     args = parser.parse_args()
     return args
 
 
 def dispatch(e, args):
-
     e.election_dirname = ids.filename_safe(args.election_dirname)
 
     e.election_name = args.election_name
+
+    e.num_winners = int(args.num_winners)
+    e.max_num_it = int(args.max_num_it)
+    e.sample_by_size = args.sample_by_size
 
     OpenAuditTool.ELECTIONS_ROOT = args.elections_root
 

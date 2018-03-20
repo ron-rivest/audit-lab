@@ -93,10 +93,12 @@ class Election(object):
     and perhaps whitespace.
     """
 
-    def __init__(self):
+    def __init__(self, num_winners=50, max_num_it=2500, sample_by_size=False):
 
         e = self
-
+        e.num_winners = num_winners
+        e.max_num_it = max_num_it
+        e.sample_by_size = sample_by_size
         # *** Notation
 
         # We use nested dictionaries extensively.

@@ -60,6 +60,12 @@ def random_naive(pbcids):
     """
     return random.sample(pbcids, 1)[0]
 
+def round_robin(pbcids, index):
+    """
+    Use round-robin to choose which county to extend the audit for.
+    """
+    return pbcids[index]
+
 def random_min_var(pbcids, actual_votes, xs, nonsample_sizes):
     """
     Choose the county to audit by choosing the county that minimizes the 
@@ -147,7 +153,7 @@ def discrete_rm(e, pbcids_to_adjust, init_x=0, num_trials=40, power=-2./3):
     x is updated according to the formula:
     x_new = x_old - a_k (noisy_guess(x_old) - noisy_guess(x_old - 1))
     a_k must fulfill properties of RM step size - currently using
-    (k+1)^power, where normally power is -1.
+    (k+1)^power, where normally power is -1. In our case, we currently use -2/3.
     """
     for mid in e.cid_m:
         cid = e.cid_m[mid]
@@ -202,11 +208,13 @@ def create_helper_dicts(e, mid, init_x, pbcids_to_adjust):
         nonsample_sizes[pbcid] = nonsample_size
     return xs, actual_votes, nonsample_sizes
 
-def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=random_min_var):
+def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=round_robin):
     """
     Get sample size, for a given county, given how many ballots have been sampled before, and the number left
     to audit, as well as the required risk limit.
     """
+    default_start_pbcid = 0
+    start = None
     num_winners = e.num_winners
     max_num_it = e.max_num_it
     for mid in e.cid_m:
@@ -223,6 +231,12 @@ def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=random_min_va
             current_sample = copy.deepcopy(actual_votes) # pbcid -> av -> count
             if pick_pbcid_func == random_min_var:
                 pbcid = pick_pbcid_func(pbcids_to_adjust, actual_votes, xs, nonsample_sizes)
+            elif pick_pbcid_func == round_robin:
+                if start is None:
+                    start = default_start_pbcid
+                pbcid = pick_pbcid_func(pbcids_to_adjust, start)
+                start += 1
+                start = (start % len(pbcids_to_adjust))
             else:
                 pbcid = pick_pbcid_func(pbcids_to_adjust)
             for av in current_sample[pbcid]:
@@ -281,7 +295,9 @@ def compute_plan(e):
         # If this flag is not true, then we keep the sample size the same, for
         # each county, throughout the audit.
         if e.sample_by_size:
-            sample_size = get_sample_size(e, list(pbcids_to_adjust))
+            pick_pbcid_func = eval(e.pick_county_func)
+            sample_size = get_sample_size(e, list(pbcids_to_adjust),
+                                          pick_pbcid_func=pick_pbcid_func)
             e.plan_tp[e.stage_time][pbcid] = \
                 min(
                     e.sn_tp[e.stage_time][pbcid] + sample_size[pbcid],

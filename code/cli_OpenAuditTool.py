@@ -96,6 +96,12 @@ def parse_args():
                         "to find how much to extend a county's sample by.",
                         default=100)
 
+    parser.add_argument("--pick_county_func",
+                        help="When doing a sampling scheme with different sample "
+                        "sizes per county, the function to choose how to pick the county "
+                        "to extend next. Choices are round_robin, random_naive, or random_min_var.",
+                        default="round_robin")
+
     args = parser.parse_args()
     return args
 
@@ -109,6 +115,7 @@ def dispatch(e, args):
     e.max_num_it = int(args.max_num_it)
     e.sample_by_size = args.sample_by_size
     e.use_discrete_rm = args.use_discrete_rm
+    e.pick_county_func = args.pick_county_func
 
     OpenAuditTool.ELECTIONS_ROOT = args.elections_root
 

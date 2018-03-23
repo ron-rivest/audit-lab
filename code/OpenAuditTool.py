@@ -99,6 +99,8 @@ class Election(object):
         e.num_winners = num_winners
         e.max_num_it = max_num_it
         e.sample_by_size = sample_by_size
+        e.use_discrete_rm = False
+        e.pick_county_func = None
         # *** Notation
 
         # We use nested dictionaries extensively.

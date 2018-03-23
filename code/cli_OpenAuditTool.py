@@ -80,6 +80,11 @@ def parse_args():
                         " county, based on Dirichlet-Multinomial simulations.",
                         default=False)
 
+    parser.add_argument("--use_discrete_rm",
+                        help="If true, then use discrete Robbins-Monro alg to decide"
+                        " on how many votes to sample at each given step.",
+                        default=False)
+
     parser.add_argument("--num_winners",
                         help="When doing a sampling scheme with different sample sizes per county, "
                         "the number of winners required to consider a single "
@@ -103,6 +108,7 @@ def dispatch(e, args):
     e.num_winners = int(args.num_winners)
     e.max_num_it = int(args.max_num_it)
     e.sample_by_size = args.sample_by_size
+    e.use_discrete_rm = args.use_discrete_rm
 
     OpenAuditTool.ELECTIONS_ROOT = args.elections_root
 

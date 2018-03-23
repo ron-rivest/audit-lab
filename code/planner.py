@@ -89,6 +89,119 @@ def random_min_var(pbcids, actual_votes, xs, nonsample_sizes):
             best_var = (var_after - var_before)
     return best_pbcid
 
+def get_noisy_guess(e, mid, pbcids, actual_votes, xs, nonsample_sizes, num_trials=100):
+    """
+    Use Dirichlet a certain number of times, to measure the probability that
+    a winner that isn't the reported winner wins in the overall election.
+    """
+    winners = []
+    cid = e.cid_m[mid]
+    for _ in range(num_trials):
+        current_sample = copy.deepcopy(actual_votes)
+
+        for pbcid in actual_votes:
+            for av in current_sample[pbcid]:
+                if current_sample[pbcid][av] == 0:
+                    current_sample[pbcid][av] += 50 # pseudocount
+            dirichlet_dict = risk_bayes.dirichlet(current_sample[pbcid])
+            extended_sample = risk_bayes.multinomial(xs[pbcid], dirichlet_dict)
+            for av in current_sample[pbcid]:
+                current_sample[pbcid][av] += extended_sample[av]
+
+        for pbcid in actual_votes:
+            dirichlet_dict = risk_bayes.dirichlet(current_sample[pbcid])
+            extended_sample = risk_bayes.multinomial(nonsample_sizes[pbcid] - xs[pbcid], dirichlet_dict)
+            for av in current_sample[pbcid]:
+                current_sample[pbcid][av] += extended_sample[av]
+
+
+        merged_sample = {}
+        for pbcid in pbcids:
+            for av in current_sample[pbcid]:
+                if av not in merged_sample:
+                    merged_sample[av] = 0
+                merged_sample[av] += current_sample[pbcid][av]
+
+        if outcomes.compute_outcome(e, cid, merged_sample) == e.ro_c[cid]:
+            winners.append(1)
+    return abs(float(num_trials - len(winners)) / len(winners) - 0.05)
+
+def subtract_from_all(xs, num):
+    """
+    Helper function to subtract num from all values in x dictionary,
+    without modifying the x dictionary.
+    """
+    new = copy.deepcopy(xs)
+    for k in new:
+        new[k] -= num
+    return new
+
+def discrete_rm(e, pbcids_to_adjust, init_x=0, num_trials=40, power=-2./3):
+    """
+    Run discrete Robbins-Monro simulation on the loss function defined by
+    the number of trials, where someone who isn't the reported winner wins.
+
+    Simulations are extended using Dirichlet-Multinomial distribution and
+    the x values are increased according to Hill's paper:
+
+    x is updated according to the formula:
+    x_new = x_old - a_k (noisy_guess(x_old) - noisy_guess(x_old - 1))
+    a_k must fulfill properties of RM step size - currently using
+    (k+1)^power, where normally power is -1.
+    """
+    for mid in e.cid_m:
+        cid = e.cid_m[mid]
+        xs, actual_votes, nonsample_sizes = create_helper_dicts(e, mid, init_x, pbcids_to_adjust)
+
+        for k in range(num_trials):
+            finite_diff = (get_noisy_guess(e, mid, pbcids_to_adjust, actual_votes, xs, nonsample_sizes) - 
+                get_noisy_guess(
+                    e, mid, pbcids_to_adjust, actual_votes, subtract_from_all(xs, 1),
+                    subtract_from_all(nonsample_sizes, -1)))
+            step_size = (k+1)**power
+            xs = subtract_from_all(xs, step_size * finite_diff-1)
+            xs = {k:int(xs[k]) for k in xs}
+        for pbcid in pbcids_to_adjust:
+            if xs[pbcid] < 0:
+                xs[pbcid] = 0
+        return xs
+
+def create_helper_dicts(e, mid, init_x, pbcids_to_adjust):
+    """
+    Helper function to create dictionary of actual votes, initialize
+    x values and get nonsample sizes per pbcid.
+    """
+    actual_votes = {}
+    nonsample_sizes = {}
+    xs = {}
+    cid = e.cid_m[mid]
+
+    # First, we create a dictionary of actual votes, where 
+    # actual_votes maps a county to a dictionary of possible candidates
+    # and actual_votes[county][candidate] gives the actual number of votes
+    # that we have sampled for the candidate so far.
+    for pbcid in pbcids_to_adjust:
+        for possible_candidate in e.votes_c[cid]:
+            if possible_candidate == ('-noCVR',):
+                continue
+            for rv in e.sn_tcpra[e.stage_time][cid][pbcid]:
+                # create actual votes
+                if pbcid not in actual_votes:
+                    actual_votes[pbcid] = {}
+                if possible_candidate not in actual_votes[pbcid]:
+                    actual_votes[pbcid][possible_candidate] = 0
+                if possible_candidate in e.sn_tcpra[e.stage_time][cid][pbcid][rv]:
+                    actual_votes[pbcid][possible_candidate] += (e.sn_tcpra[
+                        e.stage_time][cid][pbcid][rv][possible_candidate])
+        # Initialize the x's for a county to be init_x and keep track of the 
+        # sample size and non-sample size for the county.
+        xs[pbcid] = init_x
+        stratum_size = e.rn_p[pbcid]
+        sample_size = sum([actual_votes[pbcid][k] for k in actual_votes[pbcid]])
+        nonsample_size = stratum_size - sample_size
+        nonsample_sizes[pbcid] = nonsample_size
+    return xs, actual_votes, nonsample_sizes
+
 def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=random_min_var):
     """
     Get sample size, for a given county, given how many ballots have been sampled before, and the number left
@@ -98,36 +211,8 @@ def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=random_min_va
     max_num_it = e.max_num_it
     for mid in e.cid_m:
         cid = e.cid_m[mid]
-        sample_tallies = {}
-        nonsample_sizes = {}
-        xs = {}
 
-        actual_votes = {}
-
-        # First, we create a dictionary of actual votes, where 
-        # actual_votes maps a county to a dictionary of possible candidates
-        # and actual_votes[county][candidate] gives the actual number of votes
-        # that we have sampled for the candidate so far.
-        for pbcid in pbcids_to_adjust:
-            for possible_candidate in e.votes_c[cid]:
-                if possible_candidate == ('-noCVR',):
-                    continue
-                for rv in e.sn_tcpra[e.stage_time][cid][pbcid]:
-                    # create actual votes
-                    if pbcid not in actual_votes:
-                        actual_votes[pbcid] = {}
-                    if possible_candidate not in actual_votes[pbcid]:
-                        actual_votes[pbcid][possible_candidate] = 0
-                    if possible_candidate in e.sn_tcpra[e.stage_time][cid][pbcid][rv]:
-                        actual_votes[pbcid][possible_candidate] += (e.sn_tcpra[
-                            e.stage_time][cid][pbcid][rv][possible_candidate])
-            # Initialize the x's for a county to be init_x and keep track of the 
-            # sample size and non-sample size for the county.
-            xs[pbcid] = init_x
-            stratum_size = e.rn_p[pbcid]
-            sample_size = sum([actual_votes[pbcid][k] for k in actual_votes[pbcid]])
-            nonsample_size = stratum_size - sample_size
-            nonsample_sizes[pbcid] = nonsample_size
+        xs, actual_votes, nonsample_sizes = create_helper_dicts(e, mid, init_x, pbcids_to_adjust)
 
         # For max_num_it iterations, we first choose a county, then, we extend the county
         # by x. Then, given this extended sample, we use it to extend the entire contest to
@@ -197,6 +282,12 @@ def compute_plan(e):
         # each county, throughout the audit.
         if e.sample_by_size:
             sample_size = get_sample_size(e, list(pbcids_to_adjust))
+            e.plan_tp[e.stage_time][pbcid] = \
+                min(
+                    e.sn_tp[e.stage_time][pbcid] + sample_size[pbcid],
+                    e.rn_p[pbcid])
+        elif e.use_discrete_rm:
+            sample_size = discrete_rm(e, list(pbcids_to_adjust))
             e.plan_tp[e.stage_time][pbcid] = \
                 min(
                     e.sn_tp[e.stage_time][pbcid] + sample_size[pbcid],

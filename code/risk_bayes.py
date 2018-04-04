@@ -1,6 +1,6 @@
 # risk_bayes.py
 # Ronald L. Rivest (with Karim Husayn Karimi)
-# August 11, 2017
+# August 11, 2017 (rev. April 4, 2018)
 # python3
 
 """
@@ -10,9 +10,9 @@ Called by audit.py
 
 This is designed to be compatible only with sampling by pbcid;
 more elaborate sampling regimes, such as sampling by card number
-or by reported vote, are yet to be implemented, and may require
-a significant change to the code base.  (Some thoughts, albeit
-primitive, are sketched in risk_bayes_2.py.)
+(for multicard ballots) or by reported vote, are yet to be 
+implemented, and may require a significant change to the code base.  
+(Some thoughts, albeit primitive, are sketched in risk_bayes_2.py.)
 """
 
 import copy
@@ -39,11 +39,13 @@ logger = logging.getLogger(__name__)
 
 def gamma(k, rs=None):
     """ 
-    Return sample from gamma distribution with mean k.
+    Return sample from gamma distribution with mean k using random state rs.
+
     Differs from standard gamma distribution implementation
     in that that it allows k==0, and returns 0 in that case.
     Parameter rs, if present, is a numpy.random.RandomState object.
     """
+
     if rs == None:
         rs = audit.auditRandomState
     if k <= 0.0:
@@ -74,6 +76,7 @@ def dirichlet(tally):
     # Use 'sorted' to make sure order of applying gamma is deterministic,
     # for reproducibility, since gamma is randomized.
     dir = {vote: gamma(tally[vote]) for vote in sorted(tally)}
+
     total = sum(dir.values())
     dir = {vote: dir[vote] / total for vote in dir}
     return dir
@@ -100,6 +103,7 @@ def multinomial(n, ps):
            are integers.  The current routine encompasses this as a special case:
            when n is an integer the frequencies are integers distributed according
            to the standard multinomial definition.
+
            But when n is not an integer, this routine still returns a 
            meaningful result (although there is no definition I could find in the
            literature for a multinomial distribution with non-integral values of n).
@@ -107,7 +111,7 @@ def multinomial(n, ps):
            fractional part of n multiplied by the given probability for that vote.
            This extension ensures that risk_bayes will give reasonable results 
            even in situations (like, perhaps weighted STV voting) where votes are
-           present with non-integral frequencies.
+           present with non-integral frequencies.  (This feature is not yet used.)
 
     Example:
            multinomial(100.5, {'A':0.6, 'B':0.4}) ==> {'A':70.3, 'B':30.2}
@@ -116,8 +120,8 @@ def multinomial(n, ps):
 
     n_floor = int(n)
     n_frac = n - n_floor
-    # As in dirichlet routine, use 'sorted' here to ensure that computations
-    # are reproducible -- randomization happens in the same order each time.
+    # Use 'sorted' here to ensure that computations are reproducible --
+    # randomization happens in the same order each time.
     # (Such considerations deal with internals of np.random.multinomial...)
     votes_sorted = sorted(ps)
     ps_sorted = [ps[vote] for vote in votes_sorted]
@@ -132,7 +136,88 @@ def multinomial(n, ps):
 
 
 ##############################################################################
-# Risk measurement (Bayes risk)
+# Dict operations
+
+def add_dicts(d1, d2):
+    """ 
+    Update d1 by adding in values found in d2.
+
+    Input: d1   dict mapping votes to reals
+           d2   dict mapping votes to reals
+                domain(d2) need not be a subset of domain (d1);
+                missing values in d1 are treated as 0.
+    Output: None
+            Has side effect of modifying values in d1.
+    """
+
+    for av in d2:
+        d1[av] = d1.get(av, 0) + d2[av]
+
+
+def compute_prior_pseudocounts(vs, rv, pseudocount_base, pseudocount_match):
+    """
+    Make pseudocounts dict.
+
+    Input:  vs                 a list of votes (domain of prior)
+            rv                 a particular vote (e.g. the reported vote)
+            pseudocount_base   a prior pseudocount  (e.g. 0.5)
+            pseudocount_match  a prior pseudocount  (e.g. 50.0)
+
+    Output: prior_pseudocounts  a dict mapping votes to prior pseudocounts.
+
+    Method: Each entry in dict is pseudocount_base, 
+            except that for key rv we have pseudocount_match.
+
+    Remark: This approach of having prior defined by exactly two
+            pseudocounts is intended to allow prior to reflect 
+            belief that scanners are largely accurate, by having
+            pseudocount_match be large, while preserving symmetry 
+            among kinds of errors, by having all other entries only
+            equal to pseudocount_base.
+
+            Note that vote rv does not need to be in vs, in which 
+            case all entries are equal to pseudocount_base.
+    """
+
+    prior_pseudocounts = {}
+    for av in vs:
+        prior_pseudocounts[av] = (pseudocount_match if av==rv
+                                  else pseudocount_base)
+    return prior_pseudocounts
+    
+
+def draw_nonsample_tally(sample_tally, prior_pseudocounts, nonsample_size):
+    """
+    Draw from Bayesian posterior on nonsample tallies, given sample tally and prior.
+
+    Input: sample_tally       a dict mapping votes to nonnegative reals
+           prior_pseudocounts a dict mapping votes to nonnegative reals (pseudocounts)
+           non_sample_size    a nonnegative integer
+
+    Output: nonsample_tally   a dict mapping votes to nonnegative reals
+    """
+
+    tally = sample_tally.copy()
+    add_dicts(tally, prior_pseudocounts)
+
+    # Obtain Dirichlet probability distribution corresponding to
+    # hyperparameters given in the tally, indexed by av
+    dirichlet_dict = dirichlet(tally)
+
+    # Get multinomial sample with given probability distribution
+    # (This is Dirichlet-multinomial distribution, after all.)
+    # This has little effect if nonsample_size is large, as it
+    # often is.  But when nonsample_size is small, it can matter.
+    # (By providing more variance.)
+    # This also forces frequencies to be integer, assuming
+    # nonsample_size is integer.
+    nonsample_tally = multinomial(nonsample_size, dirichlet_dict)
+
+    return nonsample_tally
+
+
+##############################################################################
+# Risk measurement (Bayes risk, or posterior lost)
 
 def compute_risk(e, mid, sn_tcpra, trials=None):
     """ 
@@ -161,57 +246,48 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
     while comparison audits have a prior of pseudocount_base for off-diagonal
     (non-equal reported and actual) vote pairs, but a prior of pseudocount_match
     for equal reported-vote and actual-vote pairs.
+
+    Note also that for ballot-polling audits, the vote of ("-noCVR",) is part
+    of e.votes_c[cid], so that the test tallies include an estimated tally for
+    this vote.  This should be conservative, but might be something to be
+    eliminated someday.
     """
 
     cid = e.cid_m[mid]
     wrong_outcome_count = 0
     if trials == None:
         trials = e.n_trials
+    vs = e.votes_c[cid]
     for trial in range(trials):
-        test_tally = {vote: 0 for vote in e.votes_c[cid]}
+        test_tally = {vote: 0 for vote in vs}
         for pbcid in sorted(e.possible_pbcid_c[cid]):
             # Draw from posterior for each paper ballot collection, sum over pbcids.
             # Stratify by reported vote rv within each pbcid.
             for rv in sorted(sn_tcpra[e.stage_time][cid][pbcid]):
 
-                # (0) Obtain stratum_size, sample_size, nonsample_size
-                # Note that nonsample_size is expected, but not required, to be an int.
+                # Obtain stratum_size, sample_size, nonsample_size
                 stratum_size = e.rn_cpr[cid][pbcid][rv]
                 sample_size = sum([sn_tcpra[e.stage_time][cid][pbcid][rv][av]
                                    for av in sn_tcpra[e.stage_time][cid][pbcid][rv]])
-                nonsample_size = stratum_size - sample_size
+                nonsample_size = stratum_size - sample_size     # need not be an int
 
-                # (1) sample_tally is dict of count of votes per av (actual vote)
-                #     in this stratum sample
-                #     Ensure that every possible vote is represented
-                #     (even with 0 count).
+                # Compute sample_tally as dict of count of votes per
+                # av (actual vote) in this stratum sample, add to test_tally.
                 sample_tally = sn_tcpra[e.stage_time][cid][pbcid][rv].copy()
-                for av in e.votes_c[cid]:
-                    sample_tally[av] = sample_tally.get(av, 0)
+                add_dicts(test_tally, sample_tally)
 
-                # (2) add in pseudocounts for Bayesian prior for all av
-                sample_tally_with_prior = sample_tally.copy()
-                for av in e.votes_c[cid]:
-                    sample_tally_with_prior[av] += (e.pseudocount_match if av==rv
-                                                    else e.pseudocount_base)
+                # Add pseudocounts for prior
+                prior_pseudocounts = \
+                    compute_prior_pseudocounts(vs,
+                                               rv,
+                                               e.pseudocount_base,
+                                               e.pseudocount_match)
 
-                # (3) Obtain Dirichlet probability distribution corresponding to
-                #     hyperparameters given in the tally, indexed by av
-                dirichlet_dict = dirichlet(sample_tally_with_prior)
-
-                # (4) Get multinomial sample with given probability distribution
-                #     (This is Dirichlet-multinomial distribution, after all.)
-                #     This has little effect if nonsample_size is large, as it
-                #     often is.  But when nonsample_size is small, it can matter.
-                #     (By providing more variance.)
-                #     This also forces frequencies to be integer, assuming
-                #     nonsample_size is integer.
-                multinomial_freq = multinomial(nonsample_size, dirichlet_dict)
-
-                # (5) Update test_tally by adding multinomial freqs to each
-                #     component.
-                for av in dirichlet_dict:
-                    test_tally[av] += multinomial_freq[av]
+                # Draw nonsample_tally from posterior, add it to test tally.
+                nonsample_tally = draw_nonsample_tally(sample_tally,
+                                                       prior_pseudocounts,
+                                                       nonsample_size)
+                add_dicts(test_tally, nonsample_tally)
 
         if e.ro_c[cid] != outcomes.compute_outcome(e, cid, test_tally):  
             wrong_outcome_count += 1

@@ -302,7 +302,7 @@ class Election(object):
         # e.rv_cpb is like e.av, but reported votes instead of actual votes
 
         e.votes_c = {}
-        # input (from selids_c, reported votes, and actual otes)
+        # input (from selids_c, reported votes, and actual votes)
         # cid->vote->True
         # e.votes_c[cid] gives all the distinct votes ever seen for cid,
         # reported or actual. (These are the different possible votes,

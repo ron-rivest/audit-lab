@@ -43,9 +43,5 @@ def test_4_easy():
         OpenAuditTool_args.pause = False
 
         # added for new planner code:
-        OpenAuditTool_args.num_winners = 2
-        OpenAuditTool_args.max_num_it = 100
-        OpenAuditTool_args.sample_by_size = False 
-        OpenAuditTool_args.use_discrete_rm = False
-        OpenAuditTool_args.pick_county_func = "round_robin"
+
         cli_OpenAuditTool.dispatch(e, OpenAuditTool_args)

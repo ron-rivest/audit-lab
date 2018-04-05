@@ -114,19 +114,19 @@ def dispatch(e, args):
 
     OpenAuditTool.ELECTIONS_ROOT = args.elections_root
 
-    if args.num_winners is not None:
+    if hasattr(args, 'num_winners') and args.num_winners is not None:
         e.num_winners = int(args.num_winners)
     
-    if args.max_num_it is not None:
+    if hasattr(args, 'max_num_it') and args.max_num_it is not None:
         e.max_num_it = int(args.max_num_it)
 
-    if args.sample_by_size is not None:
+    if hasattr(args, 'sample_by_size') and args.sample_by_size is not None:
         e.sample_by_size = args.sample_by_size
 
-    if args.use_discrete_rm is not None:
+    if hasattr(args, 'use_discrete_rm') and args.use_discrete_rm is not None:
         e.use_discrete_rm = args.use_discrete_rm
 
-    if args.pick_county_func is not None:
+    if hasattr(args, 'pick_county_func') and args.pick_county_func is not None:
         e.pick_county_func = args.pick_county_func
 
     if args.set_audit_seed != None:

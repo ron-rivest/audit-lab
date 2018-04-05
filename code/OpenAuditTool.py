@@ -96,11 +96,7 @@ class Election(object):
     def __init__(self, num_winners=50, max_num_it=2500, sample_by_size=False):
 
         e = self
-        e.num_winners = num_winners
-        e.max_num_it = max_num_it
-        e.sample_by_size = sample_by_size
-        e.use_discrete_rm = False
-        e.pick_county_func = None
+
         # *** Notation
 
         # We use nested dictionaries extensively.
@@ -245,6 +241,27 @@ class Election(object):
         # True means the pbcid *might* contains ballots relevant to cid
 
         # *** election data (manifests, reported votes, and reported outcomes)
+
+        # *** Election planning
+
+        # When deciding how much to sample, the number of winners required from
+        # completion simulations to decide to decrease the sample size.
+        e.num_winners = num_winners
+
+        # The number of steps when doing a random walk, in deciding the sample size.
+        e.max_num_it = max_num_it
+
+        # Defaults to False. When set True, this means that we vary the sample
+        # size across counties, by doing a random walk.
+        e.sample_by_size = sample_by_size
+
+        # Defaults to False. When set True, this means that we vary the
+        # sample size across counties, by using discrete Robbins Monro
+        e.use_discrete_rm = False
+
+        # Defaults to None. Defines how we choose which county to sample next
+        # when contests span multiple counties.
+        e.pick_county_func = None
 
         # *** Ballot manifests
 

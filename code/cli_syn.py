@@ -67,6 +67,9 @@ def dispatch(e, args):
                 shutil.rmtree(dirpathx)
                 warnings.warn("Directory {} erased.".format(dirpathx))
 
+    # debug
+    print("dispatch args:", type(args), str(args))
+
     if args.syn_type == '1':
         syn1.generate_syn_type_1(e, args)
     elif args.syn_type == '2':

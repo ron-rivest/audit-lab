@@ -90,6 +90,7 @@ def parse_args():
                         "the number of winners required to consider a single "
                         "iteration as correct.",
                         default=2)
+
     parser.add_argument("--max_num_it",
                         help="When doing a sampling scheme with different sample "
                         "sizes per county, the number of iterations to run a random walk "

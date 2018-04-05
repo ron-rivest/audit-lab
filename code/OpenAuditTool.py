@@ -93,10 +93,14 @@ class Election(object):
     and perhaps whitespace.
     """
 
-    def __init__(self):
+    def __init__(self, num_winners=50, max_num_it=2500, sample_by_size=False):
 
         e = self
-
+        e.num_winners = num_winners
+        e.max_num_it = max_num_it
+        e.sample_by_size = sample_by_size
+        e.use_discrete_rm = False
+        e.pick_county_func = None
         # *** Notation
 
         # We use nested dictionaries extensively.
@@ -298,7 +302,7 @@ class Election(object):
         # e.rv_cpb is like e.av, but reported votes instead of actual votes
 
         e.votes_c = {}
-        # input (from selids_c, reported votes, and actual otes)
+        # input (from selids_c, reported votes, and actual votes)
         # cid->vote->True
         # e.votes_c[cid] gives all the distinct votes ever seen for cid,
         # reported or actual. (These are the different possible votes,

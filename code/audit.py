@@ -76,7 +76,7 @@ def draw_sample(e):
             e.sn_tcpr[e.stage_time][cid][pbcid] = {}
 
             sample_size = int(e.sn_tp[e.stage_time][pbcid])
-            sample_bids = e.bids_p[pbcid][:sample_size]
+            sample_bids = e.shuffled_bids_p[pbcid][:sample_size]
 
             avs = []
             rvs = []
@@ -501,7 +501,7 @@ def write_audit_output_collection_status(e):
         file.write("\n")
         for pbcid in e.pbcids:
             file.write("{},".format(pbcid))
-            file.write("{},".format(len(e.bids_p[pbcid])))
+            file.write("{},".format(len(e.shuffled_bids_p[pbcid])))
             file.write("{},".format(e.sn_tp[e.stage_time][pbcid]))
             if "sn_tp" in e.saved_state:
                 new_sample_size = e.sn_tp[e.stage_time][pbcid]

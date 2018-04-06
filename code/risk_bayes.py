@@ -293,10 +293,6 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
                                                e.pseudocount_base,
                                                e.pseudocount_match)
 
-                # debug
-                if trial < 5:
-                    print("prior_pseudocounts:", prior_pseudocounts)
-                    
                 # Draw nonsample_tally from posterior, add it to test tally.
                 nonsample_tally = draw_nonsample_tally(sample_tally,
                                                        prior_pseudocounts,

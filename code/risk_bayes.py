@@ -177,11 +177,21 @@ def compute_prior_pseudocounts(vs, rv, pseudocount_base, pseudocount_match):
 
             Note that vote rv does not need to be in vs, in which 
             case all entries are equal to pseudocount_base.
+
+    Remark: The vote ("-noCVR",) is treated specially, in that a 
+            reported vote of ("-noCVR",) is NOT expected to yield
+            an actual vote of the same value; all other reported votes
+            are expected to yield an actual vote of the same value
+            as the reported vote.  This is reflected by having a
+            prior-pseudocount of pseudocount base in general, EXCEPT
+            whe rv == av and rv != ("-noCVR",).
+
     """
 
     prior_pseudocounts = {}
     for av in vs:
-        prior_pseudocounts[av] = (pseudocount_match if av==rv
+        prior_pseudocounts[av] = (pseudocount_match
+                                  if av==rv and rv != ("-noCVR",) 
                                   else pseudocount_base)
     return prior_pseudocounts
     
@@ -283,6 +293,10 @@ def compute_risk(e, mid, sn_tcpra, trials=None):
                                                e.pseudocount_base,
                                                e.pseudocount_match)
 
+                # debug
+                if trial < 5:
+                    print("prior_pseudocounts:", prior_pseudocounts)
+                    
                 # Draw nonsample_tally from posterior, add it to test tally.
                 nonsample_tally = draw_nonsample_tally(sample_tally,
                                                        prior_pseudocounts,

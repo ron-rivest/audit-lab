@@ -25,6 +25,10 @@ Example usage:
     # Check the election spec and show reported votes for Colorado's measure 2K in Aurora County
     python3 code/OpenAuditTool.py --read_reported 7-Aurora-2K
 
+To run the test suite:
+
+    pytest-3
+
 ----
 
 **What follows is a *design document*, not a description of what

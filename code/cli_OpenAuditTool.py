@@ -46,8 +46,8 @@ def parse_args():
                         default="./elections")
 
     parser.add_argument("--set_audit_seed",
-                        help=("Seed for the random number generator used for"
-                              "auditing (arbitrary nonnegative integer)."
+                        help=("Seed for the random number generator used for "
+                              "auditing (arbitrary nonnegative integer). "
                               "(If omitted, sets from file, else clock.)"))
 
     parser.add_argument("--read_election_spec",

@@ -495,7 +495,7 @@ def write_audit_output_collection_status(e):
     with open(filename, "w") as file:
         fieldnames = ["Collection",
                       "Number of ballots",
-                      "Number of allots sampled total",
+                      "Number of ballots sampled total",
                       "Number of ballots sample this stage."]
         file.write(",".join(fieldnames))
         file.write("\n")

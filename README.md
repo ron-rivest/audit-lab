@@ -1685,6 +1685,13 @@ to get usage instructions.
 
 [Back to TOC](#table-of-contents)
 
+## Acknowledgment
+
+We gratefully acknowledge support for this project received from the
+Center for Science of Information (CSoI), an NSF Science and
+Technology Center, under grant agreement CCF-0939370.
+
+
 ## Appendix: File names
 
 During an audit, data may be augmented or improved somehow.  We

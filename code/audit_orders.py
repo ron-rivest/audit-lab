@@ -40,7 +40,15 @@ def sha256(hash_input):
 
 
 def shuffle(L, seed):
-    """ Return shuffled copy of list L, based on seed. """
+    """Return shuffled copy of list L, based on seed.
+
+    >>> shuffle(range(20), 1234567890)
+    [12, 13, 2, 18, 3, 8, 9, 7, 17, 6, 16, 5, 11, 19, 1, 14, 10, 0, 4, 15]
+    >>> shuffle(range(20), 1234567891)
+    [4, 2, 9, 8, 14, 6, 3, 5, 7, 15, 18, 10, 19, 1, 13, 11, 17, 12, 0, 16]
+    >>> shuffle(range(20), 1234567892)
+    [13, 12, 1, 0, 3, 4, 19, 10, 11, 5, 7, 2, 17, 16, 18, 14, 8, 6, 9, 15]
+    """
 
     L = list(L).copy()
     for i in range(len(L)):
@@ -50,18 +58,6 @@ def shuffle(L, seed):
         L[i], L[j] = L[j], L[i]            # swap
     return L
 
-
-def test_shuffle(seed=1234567890):
-
-    for i in range(3):
-        L = range(20)
-        logger.info(shuffle(L, seed+i))
-    """
-    [12, 13, 2, 18, 3, 8, 9, 7, 17, 6, 16, 5, 11, 19, 1, 14, 10, 0, 4, 15]
-    [4, 2, 9, 8, 14, 6, 3, 5, 7, 15, 18, 10, 19, 1, 13, 11, 17, 12, 0, 16]
-    [13, 12, 1, 0, 3, 4, 19, 10, 11, 5, 7, 2, 17, 16, 18, 14, 8, 6, 9, 15]
-    """
-    
 
 def compute_audit_orders(e):
 
@@ -121,15 +117,17 @@ def test_audit_orders():
     e = syn2.SynElection()
     compute_audit_orders(e)
     write_audit_orders(e)
-    
+
+
+def _test():
+    "Run doctests in this file"
+
+    import doctest
+    return doctest.testmod()
+
 
 if __name__=="__main__":
 
-
-    test_shuffle()
+    _test()
 
     test_audit_orders()
-
-
-    
-    

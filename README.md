@@ -1,22 +1,6 @@
 [![Build Status](https://travis-ci.org/evanlimanto/audit-lab.svg?branch=master)](https://travis-ci.org/evanlimanto/audit-lab)
 [![Coverage Status](https://coveralls.io/repos/github/evanlimanto/audit-lab/badge.svg?branch=master)](https://coveralls.io/github/evanlimanto/audit-lab?branch=master)
 
-Note: This repo "audit-lab" was created initially 2017-09-04
-as a copy of
-www.github.com/ron-rivest/2017-bayes-audit/2017-code
-As of 2017-09-04, nothing else has been changed.  It is
-just a copy.  This repo was initialized with the python code
-this README, and some data files.  But it does not contain
-the git history of how it got to this point.  If you are
-interested in that, or more links on Bayesian audits,
-see the original repo (which is public)
-www.github.com/ron-rivest/2017-bayes-audit 
-
-This repo will be used by students in a Fall 2017 UC Berkeley
-course taught by Philip Stark.
-
-Copied material starts here.
-
 # Documentation for OpenAuditTool.py (Bayesian audit support program)
 
 ``OpenAuditTool.py`` is Python3 software (or suite of programs) to support
@@ -27,9 +11,36 @@ The software is designed to be helpful for auditing elections such as
 the November 2017 Colorado election, which had hundreds of contests
 spread across 64 counties.
 
-**This README file is a *design document*, not a description of what
+Example usage:
+
+    # Preparation step to run the code
+    export PYTHONPATH=$PYTHONPATH:code
+
+    # Up-to-date help:
+    python3 code/OpenAuditTool.py --help
+
+    # Audit the example 4-easy-approval election
+    python3 code/OpenAuditTool.py --audit 4-easy-approval
+
+    # Check the election spec and show reported votes for Colorado's measure 2K in Aurora County
+    python3 code/OpenAuditTool.py --read_reported 7-Aurora-2K
+
+To run the test suite:
+
+    pytest-3
+
+----
+
+**What follows is a *design document*, not a description of what
 the code does yet.  The code here is still in progress  and only partially
 implements this design.**
+
+Note: This repo "audit-lab" was created initially 2017-09-04
+as a copy of the `multi.py` (now `OpenAuditTool.py`) code at
+[2017-bayes-audit/2017-code](http://www.github.com/ron-rivest/2017-bayes-audit/tree/master/2017-code).
+It does not contain the git history prior to that.  If you are
+interested in that, or more links on Bayesian audits,
+see the original repo.
 
 ## Table of contents
 

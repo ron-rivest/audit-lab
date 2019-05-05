@@ -10,8 +10,8 @@ given what has been done already, and the results obtained
 from the previous stage.
 """
 import copy
-import random
 
+import audit
 import outcomes
 import risk_bayes
 
@@ -19,7 +19,7 @@ import risk_bayes
 ##############################################################################
 # Compute audit plan for next stage
 
-def update_correct(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_limit):
+def update_correct(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_limit, rs):
     """
     Update how much to extend the county's sampling by.
 
@@ -30,13 +30,13 @@ def update_correct(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_limi
     for pbcid in xs:
         if xs[pbcid] == 0:
             update[pbcid] = xs[pbcid]
-        elif random.random() < 1-(1-risk_limit)**num_winners:
+        elif rs.random_sample() < 1-(1-risk_limit)**num_winners:
             update[pbcid] = (xs[pbcid]-1)
         else:
             update[pbcid] = (xs[pbcid])
     return update
 
-def update_incorrect(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_limit):
+def update_incorrect(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_limit, rs):
     """
     Update how much to extend the county's sampling by.
 
@@ -48,17 +48,17 @@ def update_incorrect(xs, pbcids_to_adjust, nonsample_sizes, num_winners, risk_li
     for pbcid in xs:
         if xs[pbcid] == nonsample_sizes[pbcid]:
             update[pbcid] = (xs[pbcid])
-        elif random.random() < (1-risk_limit)**num_winners:
+        elif rs.random_sample() < (1-risk_limit)**num_winners:
             update[pbcid] = (xs[pbcid]+1)
         else:
             update[pbcid] = (xs[pbcid])
     return update
 
-def random_naive(pbcids):
+def random_naive(pbcids, rs):
     """
     Randomly choose which county to extend the audit for.
     """
-    return random.sample(pbcids, 1)[0]
+    return rs.choice(pbcids)
 
 def round_robin(pbcids, index):
     """
@@ -208,7 +208,7 @@ def create_helper_dicts(e, mid, init_x, pbcids_to_adjust):
         nonsample_sizes[pbcid] = nonsample_size
     return xs, actual_votes, nonsample_sizes
 
-def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=round_robin):
+def get_sample_size(e, pbcids_to_adjust, rs, init_x=1, pick_pbcid_func=round_robin):
     """
     Get sample size, for a given county, given how many ballots have been sampled before, and the number left
     to audit, as well as the required risk limit.
@@ -264,9 +264,9 @@ def get_sample_size(e, pbcids_to_adjust, init_x=1, pick_pbcid_func=round_robin):
             for k in range(num_winners):
                 winners.append(outcomes.compute_outcome(e, cid, merged_sample))
             if len(set(winners)) == 1 and winners[0] == e.ro_c[cid]:
-                xs = update_correct(xs, [pbcid], nonsample_sizes, num_winners, e.risk_limit_m[mid])
+                xs = update_correct(xs, [pbcid], nonsample_sizes, num_winners, e.risk_limit_m[mid], rs)
             else:
-                xs = update_incorrect(xs, [pbcid], nonsample_sizes, num_winners, e.risk_limit_m[mid])
+                xs = update_incorrect(xs, [pbcid], nonsample_sizes, num_winners, e.risk_limit_m[mid], rs)
     return xs
 
 def compute_plan(e):
@@ -280,6 +280,7 @@ def compute_plan(e):
 
     # for now, use simple strategy of looking at more ballots
     # only in those paper ballot collections that are still being audited
+    rs = audit.auditRandomState
     e.plan_tp[e.stage_time] = e.sn_tp[e.stage_time].copy()
     pbcids_to_adjust = set()
     for mid in e.mids:
@@ -296,14 +297,15 @@ def compute_plan(e):
         # each county, throughout the audit.
         if e.sample_by_size:
             pick_pbcid_func = eval(e.pick_county_func)
-            sample_size = get_sample_size(e, list(pbcids_to_adjust),
+            sample_size = get_sample_size(e, list(pbcids_to_adjust), rs,
                                           pick_pbcid_func=pick_pbcid_func)
             e.plan_tp[e.stage_time][pbcid] = \
                 min(
                     e.sn_tp[e.stage_time][pbcid] + sample_size[pbcid],
                     e.rn_p[pbcid])
         elif e.use_discrete_rm:
-            sample_size = discrete_rm(e, list(pbcids_to_adjust))
+            sample_size = discrete_rm(e, list(pbcids_to_adjust),
+                                      rs=rs)
             e.plan_tp[e.stage_time][pbcid] = \
                 min(
                     e.sn_tp[e.stage_time][pbcid] + sample_size[pbcid],
